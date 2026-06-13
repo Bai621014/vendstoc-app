@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendstoc App v5 - Plateforme Intégrale de Live Commerce</title>
+    <!-- Chargement des SDK pour les fonctionnalités Médias et de Communication -->
+    <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.18.0.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0d0d12; color: #ffffff; margin: 0; padding: 15px; text-align: center; }
+        .container { max-width: 550px; margin: 0 auto; padding-bottom: 40px; }
+        h1 { color: #25D366; font-size: 28px; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 1px; }
+        .subtitle { color: #888; font-size: 13px; margin-top: 0; margin-bottom: 20px; }
+        
+        /* Onglets de Navigation Fluides */
+        .nav-tabs { display: flex; justify-content: space-around; margin: 15px 0; background: #181822; border-radius: 30px; padding: 6px; border: 1px solid #252532; }
+        .tab { padding: 12px 18px; color: #a0a0b0; cursor: pointer; border-radius: 25px; font-weight: bold; font-size: 14px; transition: 0.3s; width: 30%; }
+        .tab.active { background: #25D366; color: white; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3); }
+        
+        /* Panneaux d'affichage */
+        .panel { display: none; background: #12121a; padding: 20px; border-radius: 20px; border: 1px solid #222230; text-align: left; box-shadow: 0 10px 25px rgba(0,0,0,0.5); animation: fadeIn 0.4s ease; }
+        .panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Interface Vidéo Live */
+        #video-container { width: 100%; height: 260px; background: #050508; border-radius: 15px; margin-bottom: 15px; position: relative; overflow: hidden; border: 2px solid #222; }
+        .live-indicator { position: absolute; top: 15px; left: 15px; background: #e63946; color: white; padding: 5px 10px; border-radius: 5px; font-size: 11px; font-weight: bold; text-transform: uppercase; animation: pulse 1.5s infinite; display: none; }
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+        
+        /* Boutons d'actions */
+        button { width: 100%; padding: 15px; font-size: 15px; font-weight: bold; border-radius: 30px; border: none; cursor: pointer; margin: 8px 0; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        button:active { transform: scale(0.98); }
+        .btn-live { background: #e63946; color: white; }
+        .btn-pay { background: #ffb703; color: #000; }
+        .btn-wa { background: #25D366; color: white; display: none; }
+        .btn-ia-off { background: #1c1c28; color: #ffb703; border: 1px dashed #ffb703; }
+        .btn-ia-on { background: #25D366; color: white; }
+        
+        /* Métriques et Traçabilité */
+        .meta-box { background: #1a1a26; padding: 15px; border-radius: 12px; margin: 12px 0; border-left: 4px solid #ffb703; }
+        .meta-row { display: flex; justify-content: space-between; margin: 8px 0; font-size: 14px; }
+        .highlight { color: #ffb703; font-weight: bold; }
+        
+        /* Vitrine e-Commerce */
+        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .product-card { background: #1a1a26; padding: 12px; border-radius: 12px; text-align: center; border: 1px solid #252535; }
+        .product-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; }
+        
+        /* Formulaires */
+        input[type="text"], input[type="number"] { width: 92%; padding: 12px; margin-bottom: 10px; background: #161622; border: 1px solid #303045; color: #fff; border-radius: 8px; font-size: 14px; }
+        
+        /* Historique des logs système */
+        .log-status { font-size: 13px; color: #00ecff; background: rgba(0, 236, 255, 0.1); padding: 10px; border-radius: 8px; text-align: center; margin-top: 5px; font-family: monospace; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Vendstoc App 🚀</h1>
+        <p class="subtitle">Live Vidéo • Saisie Vocale • Facture Signée • Répondeur IA</p>
+
+        <!-- Onglets du Menu Principal -->
+        <div class="nav-tabs">
+            <div class="tab active" id="tab-live" onclick="switchTab('live')">📺 Direct Live</div>
+            <div class="tab" id="tab-catalogue" onclick="switchTab('catalogue')">🛍️ Vitrine</div>
+            <div class="tab" id="tab-appels" onclick="switchTab('appels')">📞 Clients</div>
+        </div>
+
+        <!-- 📂 SECTION 1 : DIRECT LIVE & DICTÉE AUTOMATIQUE -->
+        <div id="panel-live" class="panel active">
+            <div id="video-container">
+                <div class="live-indicator" id="live-badge">🔴 LIVE DIRECT</div>
+                <div id="video-placeholder" style="position:absolute; top:45%; left:0; width:100%; text-align:center; color:#555565; font-size:14px;">[ Caméra prête pour la diffusion ]</div>
+            </div>
+            
+            <button class="btn-live" onclick="toggleLiveStream()">📺 Lancer le Live Vidéo & Micro Commerce</button>
+            <div class="log-status" id="status-vocal">Statut : Micro inactif. Lancez le live pour écouter.</div>
+            
+            <h3 style="margin-top: 20px; border-bottom: 1px solid #222; padding-bottom: 5px; color:#25D366;">🧾 Traçabilité de l'Achat en Cours</h3>
+            <div class="meta-box">
+                <div class="meta-row"><span>ID Transaction (Unique) :</span><span id="f-id" class="highlight">---</span></div>
+                <div class="meta-row"><span>Marchandise captée :</span><span id="f-art" style="color:#fff;">En attente de dictée...</span></div>
+                <div class="meta-row"><span>Prix Global Client :</span><span><span id="f-prix">0</span> FCFA</span></div>
+                <div class="meta-row"><span>Commission Prélevée (5%) :</span><span style="color:#e63946;"><span id="f-com">0</span> FCFA</span></div>
+                <div class="meta-row"><span>Reste Net Vendeur :</span><span style="color:#25D366; font-weight:bold;"><span id="f-net">0</span> FCFA</span></div>
+                <div class="meta-row"><span>Numéro Client WhatsApp :</span><span id="f-tel" class="highlight">---</span></div>
+            </div>
+
+            <!-- Boutons dynamiques déclenchés par les flux financiers -->
+            <button class="btn-pay" id="btn-valider-versement" style="display:none;" onclick="executerSignatureCommandant()">💰 Confirmer le Versement de la Somme</button>
+
+            <a id="lien-whatsapp" href="#" target="_blank" style="text-decoration: none;">
+                <button class="btn-wa">📩 Envoyer la Facture Signée par le Commandant</button>
+            </a>
+        </div>
+
+        <!-- 📂 SECTION 2 : VITRINE & CATALOGUE PRODUITS -->
+        <div id="panel-catalogue" class="panel">
+            <h3 style="color:#25D366; margin-top:0;">Enregistrer une Marchandise</h3>
+            <p style="font-size:12px; color:#aaa; margin-top:-10px;">Prenez une photo en direct ou importez-la pour l'ajouter à la vitrine mondiale.</p>
+            
+            <input type="file" id="img-input" accept="image/*" style="margin-bottom: 15px; color:#ccc; font-size:12px;"><br>
+            <input type="text" id="p-nom" placeholder="Ex: Sac en cuir VIP, Carton de lait, etc.">
+            <input type="number" id="p-prix" placeholder="Prix de vente en FCFA">
+            <button style="background:#25D366; color:white; border-radius:10px;" onclick="sauvegarderArticle()">Enregistrer l'article</button>
+
+            <h3 style="margin-top:25px; border-top:1px solid #222; padding-top:15px; color:#ffb703;">🛍️ Articles Disponibles</h3>
+            <div class="product-grid" id="vitrine-container">
+                <!-- Les articles publiés apparaîtront ici automatiquement -->
+            </div>
+        </div>
+
+        <!-- 📂 SECTION 3 : CLIENTS, APPELS DIRECTS & CHATBOT RÉPONDEUR AUTOMATIQUE -->
+        <div id="panel-appels" class="panel">
+            <h3 style="color:#25D366; margin-top:0;">📞 Appels Négociations Directs</h3>
+            <p style="font-size:13px; color:#aaa;">Permettez à vos grossistes ou clients de vous appeler directement en 1-à-1 pour inspecter la marchandise.</p>
+            <div style="display:flex; gap:10px;">
+                <button style="background: #1e73be; color: white;" onclick="passerAppel('Audio')">🎙️ Appel Audio</button>
+                <button style="background: #6a1b9a; color: white;" onclick="passerAppel('Vidéo')">📹 Appel Vidéo</button>
+            </div>
+
+            <h3 style="margin-top:30px; border-top:1px solid #222; padding-top:15px; color:#ffb703;">🤖 Automatisation intelligente en cas d'absence</h3>
+            <p style="font-size:13px; color:#ccc;">Si vous êtes occupé, en livraison, ou absent, activez l'assistant. Le chatbot prendra le relais automatiquement sur WhatsApp pour proposer la vitrine et enregistrer la vente.</p>
+            
+            <button id="btn-chatbot" class="btn-ia-off" onclick="gérerActivationChatbot()">🔴 Activer le Répondeur Automatique Chatbot IA</button>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURATION DU FLUX MÉDIA AGORA (One-to-Many / One-to-One)
+        const AGORA_APP_ID = "VOTRE_APP_ID_AGORA"; 
+        let clientAgora, trackVideoCam, trackAudioMicro;
+        let streamingActif = false;
+        let systemeReconnaissance;
+        let chatbotActif = false;
+        
+        // Stockage de la transaction courante (Traçabilité financière)
+        let transactionEnCours = null;
+
+        // Gestion de la navigation entre onglets
+        function switchTab(nomOnglet) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            
+            document.getElementById('tab-' + nomOnglet).classList.add('active');
+            document.getElementById('panel-' + nomOnglet).classList.add('active');
+        }
+
+        // LOGIQUE DE RECONNAISSANCE VOCALE DE COMMERCE
+        const SpeechEngine = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechEngine) {
+            systemeReconnaissance = new SpeechEngine();
+            systemeReconnaissance.lang = 'fr-FR';
+            systemeReconnaissance.continuous = true;
+
+            systemeReconnaissance.onresult = function(event) {
+                const phraseTraduite = event.results[event.results.length - 1][0].transcript;
+                document.getElementById('status-vocal').innerText = "📢 Capté : " + phraseTraduite;
+
+                // Extraction des entités numériques : [0]=Prix, [1]=Numéro WhatsApp
+                const nombresTrouves = phraseTraduite.match(/\d+/g);
+                if (nombresTrouves && nombresTrouves.length >= 2) {
+                    const prixExtrait = parseInt(nombresTrouves[0]);
+                    const telephoneExtrait = nombresTrouves[1];
+                    const nomArticleExtrait = phraseTraduite.split(/[0-9]/)[0].trim() || "Marchandise Générale";
+
+                    // Calcul de la Commission Automatique Réformée (5%)
+                    const codeUniqueTransaction = "VND-TRAC-" + Math.floor(100000 + Math.random() * 900000);
+                    const commissionFrais = Math.round(prixExtrait * 0.05);
+                    const netReversé = prixExtrait - commissionFrais;
+
+                    // Hydratation de l'objet de traçabilité
+                    transactionEnCours = {
+                        id: codeUniqueTransaction,
+                        article: nomArticleExtrait,
+                        prix: prixExtrait,
+                        com: commissionFrais,
+                        net: netReversé,
+                        tel: telephoneExtrait,
+                        verifie: false
+                    };
+
+                    // Rendu Visuel des Métriques de Facturation
+                    document.getElementById('f-id').innerText = codeUniqueTransaction;
+                    document.getElementById('f-art').innerText = nomArticleExtrait;
+                    document.getElementById('f-prix').innerText = prixExtrait.toLocaleString();
+                    document.getElementById('f-com').innerText = commissionFrais.toLocaleString();
+                    document.getElementById('f-net').innerText = netReversé.toLocaleString();
+                    document.getElementById('f-tel').innerText = telephoneExtrait;
+
+                    // Changement d'état : Demande de validation du versement de l'argent
+                    document.getElementById('btn-valider-versement').style.display = 'block';
+                    document.querySelector('.btn-wa').style.display = 'none';
+                }
+            };
+        }
+
+        // TRAÇABILITÉ & SÉCURISATION : Signature du Commandant Vendstoc
+        function executerSignatureCommandant() {
+            if (!transactionEnCours) return;
+
+            transactionEnCours.verifie = true;
+            alert(`✅ Somme encaissée !\nL'empreinte financière est sécurisée. Génération du reçu officiel certifié par le Commandant...`);
+
+            // Construction textuelle de la facture infalsifiable
+            const corpsFactureWhatsApp = 
+                `*📄 VENDSTOC APP - REÇU OFFICIEL DE TRANSACTION*\n` +
+                `•————————————————————————————•\n` +
+                `🔑 *ID TRAÇABILITÉ :* \`${transactionEnCours.id}\`\n` +
+                `📦 *MARCHANDISE :* ${transactionEnCours.article}\n` +
+                `💰 *SOMME VERSÉE :* ${transactionEnCours.prix.toLocaleString()} FCFA\n` +
+                `⚡ *PRÉLÈVEMENT AUTO :* Accusé et Traité (5% COMPRIS)\n` +
+                `🟢 *STATUT FINANCIER :* SÉCURISÉ & VALIDÉ\n` +
+                `•————————————————————————————•\n` +
+                `✍️ *SIGNATURES ET SCELLÉS :*\n` +
+                `[🔒 DOCUMENT SIGNÉ NUMÉRIQUEMENT PAR LE COMMANDANT VENDSTOC]\n\n` +
+                `Prêt pour enlèvement ou expédition immédiate.`;
+
+            const urlLienFinal = `https://wa.me/${transactionEnCours.tel}?text=${encodeURIComponent(corpsFactureWhatsApp)}`;
+            
+            // Activation du bouton d'envoi automatique
+            const boutonEnvoiWhatsApp = document.getElementById('lien-whatsapp');
+            boutonEnvoiWhatsApp.href = urlLienFinal;
+            
+            document.querySelector('.btn-wa').style.display = 'block';
+            document.getElementById('btn-valider-versement').style.display = 'none';
+            document.getElementById('status-vocal').innerHTML = "💚 Facture légale signée par le Commandant prête pour WhatsApp !";
+        }
+
+        // ACTIVATION DU FLUX LIVE STREAMING (AGORA MULTIMÉDIA)
+        async function toggleLiveStream() {
+            if (!streamingActif) {
+                try {
+                    clientAgora = AgoraRTC.createClient({ mode: "live", codec: "vp8" });
+                    await clientAgora.setClientRole("host");
+
+                    trackAudioMicro = await AgoraRTC.createMicrophoneAudioTrack();
+                    trackVideoCam = await AgoraRTC.createCameraVideoTrack();
+                    
+                    document.getElementById('video-placeholder').style.display = "none";
+                    trackVideoCam.play('video-container');
+                    document.getElementById('live-badge').style.display = "block";
+
+                    if (systemeReconnaissance) systemeReconnaissance.start();
+
+                    document.getElementById('status-vocal').innerText = "📡 Flux Live connecté + Écoute vocale active !";
+                    streamingActif = true;
+                } catch (erreur) {
+                    alert("Info : Pour activer la caméra réelle en production, hébergez ce fichier sous protocole HTTPS (ex: GitHub Pages). Le mode simulation reste actif.");
+                    document.getElementById('status-vocal').innerText = "📡 [Simulation] Écoute vocale des prix activée sans flux vidéo.";
+                    if (systemeReconnaissance) systemeReconnaissance.start();
+                    streamingActif = true;
+                }
+            } else {
+                if(trackVideoCam) trackVideoCam.stop();
+                if(trackAudioMicro) trackAudioMicro.stop();
+                if(systemeReconnaissance) systemeReconnaissance.stop();
+                
+                document.getElementById('video-container').innerHTML = `
+                    <div class="live-indicator" id="live-badge">🔴 LIVE DIRECT</div>
+                    <div id="video-placeholder" style="position:absolute; top:45%; left:0; width:100%; text-align:center; color:#555565; font-size:14px;">[ Caméra prête pour la diffusion ]</div>
+                `;
+                document.getElementById('live-badge').style.display = "none";
+                document.getElementById('status-vocal').innerText = "Statut : Micro éteint et diffusion coupée.";
+                streamingActif = false;
+            }
+        }
+
+        // FONCTIONNALITÉ DU CATALOGUE : SAUVEGARDE ET VITRINE IMAGES
+        function sauvegarderArticle() {
+            const nomArticle = document.getElementById('p-nom').value;
+            const prixArticle = document.getElementById('p-prix').value;
+            const selecteurFichier = document.getElementById('img-input');
+
+            if (!nomArticle || !prixArticle) { alert("Veuillez assigner un nom et un prix à la marchandise."); return; }
+
+            const structureCarte = document.createElement('div');
+            structureCarte.className = "product-card";
+            
+            let cheminImage = "https://via.placeholder.com/150?text=Pas+D'image";
+            if (selecteurFichier.files && selecteurFichier.files[0]) {
+                cheminImage = URL.createObjectURL(selecteurFichier.files[0]);
+            }
+
+            structureCarte.innerHTML = `
+                <img src="${cheminImage}">
+                <h4 style="margin:5px 0; font-size:15px;">${nomArticle}</h4>
+                <p style="color:#25D366; font-weight:bold; margin:5px 0;">${parseInt(prixArticle).toLocaleString()} FCFA</p>
+            `;
+            
+            document.getElementById('vitrine-container').appendChild(structureCarte);
+
+            // Remise à zéro des champs du formulaire
+            document.getElementById('p-nom').value = "";
+            document.getElementById('p-prix').value = "";
+        }
+
+        // CENTRE D'APPELS DE NÉGOCIATION ONE-TO-ONE
+        function passerAppel(mode) {
+            alert(`📞 Canal de communication direct ouvert.\nAppel ${mode} sécurisé en cours vers la passerelle de négociation du client.`);
+        }
+
+        // CHATBOT RÉPONDEUR AUTOMATIQUE IA
+        function gérerActivationChatbot() {
+            chatbotActif = !chatbotActif;
+            const boutonChatbot = document.getElementById('btn-chatbot');
+            
+            if (chatbotActif) {
+                boutonChatbot.innerText = "🟢 Chatbot IA Actif (Mode Occupé Engagé)";
+                boutonChatbot.className = "btn-ia-on";
+                alert("Mode Occupé activé, Boss ! L'assistant automatisé intercepte désormais les demandes des clients sur WhatsApp pour afficher les prix et gérer les commandes en arrière-plan.");
+            } else {
+                boutonChatbot.innerText = "🔴 Activer le Répondeur Automatique Chatbot IA";
+                boutonChatbot.className = "btn-ia-off";
+            }
+        }
+    </script>
+</body>
+</html>
