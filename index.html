@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vendstoc App</title>
-    <!-- FontAwesome pour des icônes modernes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -117,7 +116,7 @@
             font-size: 13px;
         }
 
-        input[type="text"], input[type="number"], file {
+        input[type="text"], input[type="number"] {
             width: 100%;
             padding: 12px;
             border-radius: 8px;
@@ -256,26 +255,24 @@
             top: 40%;
             left: 45%;
             color: var(--vert-whatsapp);
+            z-index: 10;
         }
-    </style>
+    </script>
 </head>
 <body>
 
     <div class="container">
-        <!-- En-tête -->
         <div class="header">
             <h1>VENDSTOC APP 🚀</h1>
             <p>Live Vidéo • Saisie Vocale • Facture Signée • Répondeur IA</p>
         </div>
 
-        <!-- Onglets Navigation -->
         <div class="navigation-tabs">
             <button class="tab-btn active" onclick="changerOnglet('live')"><i class="fa-solid fa-tv"></i> Direct Live</button>
             <button class="tab-btn" onclick="changerOnglet('vitrine')"><i class="fa-solid fa-bag-shopping"></i> Vitrine</button>
             <button class="tab-btn" onclick="changerOnglet('clients')"><i class="fa-solid fa-phone"></i> Clients</button>
         </div>
 
-        <!-- SECTION 1 : DIRECT LIVE -->
         <div id="section-live" class="app-section active">
             <h2><i class="fa-solid fa-video"></i> Module de Vente Directe</h2>
             <div class="video-box" id="live-video-box">
@@ -289,11 +286,11 @@
             </button>
 
             <div class="status-box">
-                Statut : <span id="statut-vocal" style="color:var(--rouge-action);">Micro inactif. Lancez le live pour écouter.</span>
+                Statut : <span id="statut-vocal" style="color:var(--rouge-action); font-weight:bold;">Micro inactif. Lancez le live pour écouter.</span>
             </div>
 
             <h3>📝 Traçabilité de l'Achat en Cours</h3>
-            <p id="affichage-analyse" style="font-size:14px; color:var(--texte-gris); italic; min-height:30px;">
+            <p id="affichage-analyse" style="font-size:14px; color:var(--texte-gris); font-style: italic; min-height:30px;">
                 *Cliquez sur le bouton rouge et dictez (ex: "Sac à main 10000 francs pour le 66000000")*
             </p>
 
@@ -310,7 +307,6 @@
             </button>
         </div>
 
-        <!-- SECTION 2 : VITRINE MONDIALE -->
         <div id="section-vitrine" class="app-section">
             <h2><i class="fa-solid fa-store"></i> Enregistrer une Marchandise</h2>
             <p style="color:var(--texte-gris); font-size:12px; margin-top:-10px; margin-bottom:15px;">Prenez une photo en direct ou importez-la pour l'ajouter à la vitrine mondiale.</p>
@@ -334,11 +330,9 @@
 
             <h3 style="margin-top:25px; color:#ffb703;"><i class="fa-solid fa-boxes-stacked"></i> Articles Disponibles</h3>
             <div class="grid-vitrine" id="vitrine-container">
-                <!-- Les articles chargés s'afficheront ici -->
-            </div>
+                </div>
         </div>
 
-        <!-- SECTION 3 : CLIENTS & IA -->
         <div id="section-clients" class="app-section">
             <h2><i class="fa-solid fa-users"></i> Suivi Relation Client</h2>
             <p style="color:var(--texte-gris); font-size:14px;">Espace de stockage de la clientèle et configuration du répondeur automatique IA.</p>
@@ -351,7 +345,7 @@
     <script>
         // --- CONFIGURATION GENERALE ---
         const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dvoya2e3o/image/upload";
-        const UPLOAD_PRESET = "ml_default"; // Preset générique ouvert par défaut sur Cloudinary
+        const UPLOAD_PRESET = "ml_default"; 
         
         let reconnaissanceVocale;
         let microActif = false;
@@ -364,7 +358,9 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             
             document.getElementById(`section-${cible}`).classList.add('active');
-            event.currentTarget.classList.add('active');
+            if(event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
 
             if(cible === 'vitrine') {
                 afficherCatalogue();
@@ -393,10 +389,10 @@
                 return;
             }
 
-            // Image de secours temporaire
+            // Image de secours par défaut
             let urlImageFinale = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400"; 
             
-            // Étape 1 : Ajout visuel d'une carte de chargement temporaire
+            // Étape 1 : Créer la carte de chargement visuel
             const container = document.getElementById('vitrine-container');
             const tempId = "temp-" + Date.now();
             const carteTemp = document.createElement('div');
@@ -410,7 +406,7 @@
             `;
             container.appendChild(carteTemp);
 
-            // Étape 2 : Traitement et téléversement Cloudinary si fichier présent
+            // Étape 2 : Envoi vers Cloudinary
             if (fileInput.files && fileInput.files[0]) {
                 const fichier = fileInput.files[0];
                 const formData = new FormData();
@@ -427,19 +423,19 @@
                     if (resultatsCloud.secure_url) {
                         urlImageFinale = resultatsCloud.secure_url;
                     } else {
-                        // En cas de preset non configuré, conversion en local pour ne pas bloquer l'image
                         urlImageFinale = URL.createObjectURL(fichier);
                     }
                 } catch (err) {
-                    console.error("Erreur serveur Cloudinary, bascule locale.", err);
+                    console.error("Erreur Cloudinary, bascule locale.", err);
                     urlImageFinale = URL.createObjectURL(fichier);
                 }
             }
 
-            // Suppression du loader temporaire
-            document.getElementById(tempId).remove();
+            // Nettoyage de la carte temporaire
+            const elementTemp = document.getElementById(tempId);
+            if(elementTemp) elementTemp.remove();
 
-            // Étape 3 : Enregistrement de la donnée propre
+            // Étape 3 : Sauvegarde définitive des données
             const nouvelArticle = {
                 id: Date.now(),
                 nom: nom,
@@ -450,7 +446,7 @@
             catalogueArticles.push(nouvelArticle);
             localStorage.setItem('vendstoc_articles', JSON.stringify(catalogueArticles));
 
-            // Réinitialisation du formulaire
+            // Reset des champs
             nomInput.value = "";
             prixInput.value = "";
             fileInput.value = "";
@@ -464,7 +460,7 @@
             container.innerHTML = "";
 
             if(catalogueArticles.length === 0) {
-                container.innerHTML = `<p style="grid-column: span 2; color:var(--texte-gris); font-size:13px;">Aucun article dans la vitrine.</p>`;
+                container.innerHTML = `<p style="grid-column: span 2; color:var(--texte-gris); font-size:13px; padding:10px;">Aucun article dans la vitrine.</p>`;
                 return;
             }
 
@@ -480,7 +476,7 @@
             });
         }
 
-        // --- ENGINE RECONNAISSANCE VOCALE & STREAMING LIVE ---
+        // --- ENGINE RECONNAISSANCE VOCALE & STREAMING LIVE REPARE ---
         async function basculerLiveVocal() {
             const bouton = document.getElementById('btn-live-vocal');
             const statutTxt = document.getElementById('statut-vocal');
@@ -500,10 +496,10 @@
                     console.log("Caméra indisponible ou refusée.");
                 }
 
-                // Lancement de la reconnaissance de voix
+                // Lancement du moteur vocal
                 const SpeechConstructor = window.SpeechRecognition || window.webkitSpeechRecognition;
                 if (!SpeechConstructor) {
-                    alert("La reconnaissance vocale n'est pas supportée sur ce navigateur mobile (Privilégiez Chrome).");
+                    alert("La reconnaissance vocale n'est pas supportée sur ce navigateur mobile (Privilégiez Google Chrome).");
                     return;
                 }
 
@@ -525,5 +521,11 @@
                 reconnaissanceVocale.start();
                 microActif = true;
                 bouton.innerHTML = `<i class="fa-solid fa-video-slash"></i> Couper le Live & Micro Commerce`;
-                bouton.style.backgroundColor = var(--rouge-action);
-                st
+                bouton.style.backgroundColor = "var(--rouge-action)";
+                statutTxt.innerText = "Écoute en cours... Parlez naturellement.";
+                statutTxt.style.color = "var(--vert-whatsapp)";
+            } else {
+                // Éteindre les périphériques
+                if(reconnaissanceVocale) reconnaissanceVocale.stop();
+                if(fluxVideo) {
+                    fluxVideo.getTracks().
