@@ -103,7 +103,6 @@
             font-size: 15px;
         }
 
-        /* Style spécifique barre de recherche */
         .search-container {
             position: relative;
             margin-bottom: 15px;
@@ -280,8 +279,9 @@
     </div>
 
     <script>
+        // --- CONFIGURATION DE TES CONNEXIONS MISES À JOUR ---
         const SUPABASE_URL = "https://ekmlcvyrjlenujvlixik.supabase.co";
-        const SUPABASE_KEY = "EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVrbWxjdnlyamxlbnVqdmxpeGlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDUzODUsImV4cCI6MjA5NzAyMTM4NX0.Y1f8Ogp-RfE_wvJi4GCz8BdwMsjZ3YM8tggHveByNQw";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVrbWxjdnlyamxlbnVqdmxpeGlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDUzODUsImV4cCI6MjA5NzAyMTM4NX0.Y1f8Ogp-RfE_wvJi4GCz8BdwMsjZ3YM8tggHveByNQw";
 
         const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dvoya2e3o/image/upload";
         const UPLOAD_PRESET = "ml_default"; 
@@ -307,7 +307,7 @@
         // --- FILTRE DYNAMIQUE (BARRE DE RECHERCHE) ---
         function filtrerArticles() {
             const recherche = document.getElementById('barre-recherche').value.toLowerCase().trim();
-            const articlesFiltres = tousLesArticles.filter(art => art.nom.toLowerCase().includes(recherche));
+            const articlesFiltres = tousLesArticles.filter(art => art.nom && art.nom.toLowerCase().includes(recherche));
             afficherVitrine(articlesFiltres);
         }
 
@@ -349,25 +349,31 @@
             };
 
             try {
-                await fetch(`${SUPABASE_URL}/rest/v1/articles`, {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/articles`, {
                     method: 'POST',
                     headers: {
                         'apikey': SUPABASE_KEY,
                         'Authorization': `Bearer ${SUPABASE_KEY}`,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
                     },
                     body: JSON.stringify(donnesArticle)
                 });
 
-                alert("🚀 Marchandise publiée avec succès !");
-                document.getElementById('p-nom').value = "";
-                document.getElementById('p-prix').value = "";
-                document.getElementById('p-whatsapp').value = "";
-                document.getElementById('p-crypto').value = "";
-                fileInput.value = "";
-                changerOnglet('vitrine');
+                if(response.ok) {
+                    alert("🚀 Marchandise publiée avec succès !");
+                    document.getElementById('p-nom').value = "";
+                    document.getElementById('p-prix').value = "";
+                    document.getElementById('p-whatsapp').value = "";
+                    document.getElementById('p-crypto').value = "";
+                    fileInput.value = "";
+                    document.getElementById('file-label').innerText = "Prendre la photo du produit";
+                    changerOnglet('vitrine');
+                } else {
+                    alert("Erreur serveur lors de la publication.");
+                }
 
-            } catch (error) { alert("Erreur lors de la publication."); }
+            } catch (error) { alert("Erreur réseau lors de la publication."); }
         }
 
         // --- CHARGEMENT DEPUIS SUPABASE ---
@@ -379,8 +385,12 @@
                 const res = await fetch(`${SUPABASE_URL}/rest/v1/articles?order=created_at.desc`, {
                     headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
                 });
-                tousLesArticles = await res.json();
-                filtrerArticles(); // Affiche et applique si du texte est déjà saisi
+                if(res.ok) {
+                    tousLesArticles = await res.json();
+                    filtrerArticles();
+                } else {
+                    container.innerHTML = "<p>Erreur de communication avec la base de données.</p>";
+                }
             } catch (e) { container.innerHTML = "<p>Erreur de synchronisation.</p>"; }
         }
 
@@ -389,12 +399,11 @@
             const container = document.getElementById('vitrine-container');
             container.innerHTML = "";
 
-            if(liste.length === 0) {
+            if(!liste || liste.length === 0) {
                 container.innerHTML = "<p>Aucun article ne correspond à votre recherche.</p>";
                 return;
             }
 
-            // Détection si le client arrive via un lien d'affilié (?ref=...)
             const urlParams = new URLSearchParams(window.location.search);
             const parentAffilie = urlParams.get('ref') || "";
 
@@ -402,10 +411,9 @@
                 const carte = document.createElement('div');
                 carte.className = "product-card";
                 
-                // Calcul de la valeur de commission en FCFA
-                const valeurCommission = (art.prix * (art.commission_pct || 10)) / 100;
+                const commissionPct = art.commission_pct || 10;
+                const valeurCommission = (art.prix * commissionPct) / 100;
 
-                // Construction des liens
                 let texteWA = `Bonjour, je souhaite commander l'article *${art.nom}* au prix de ${art.prix} FCFA.`;
                 if(parentAffilie) {
                     texteWA += `\n\n_(Commande passée via l'affilié ID: ${parentAffilie})_`;
@@ -414,14 +422,14 @@
                 const lienMomo = `https://www.monetbil.com/pay/v2.1/votre_identifiant_monetbil?amount=${art.prix}`; 
 
                 carte.innerHTML = `
-                    <img src="${art.image}">
+                    <img src="${art.image || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400'}">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h3 style="margin:0; text-transform:capitalize;">${art.nom}</h3>
-                        <span style="color:var(--vert-whatsapp); font-weight:bold; font-size:18px;">${art.prix.toLocaleString()} FCFA</span>
+                        <h3 style="margin:0; text-transform:capitalize;">${art.nom || 'Sans nom'}</h3>
+                        <span style="color:var(--vert-whatsapp); font-weight:bold; font-size:18px;">${(art.prix || 0).toLocaleString()} FCFA</span>
                     </div>
                     
                     <div style="display:flex; justify-content: space-between; align-items:center; margin-top:5px;">
-                        <span class="badge-commission"><i class="fa-solid fa-money-bill-trend-up"></i> Affiliation : ${art.commission_pct}% (${valeurCommission} FCFA)</span>
+                        <span class="badge-commission"><i class="fa-solid fa-money-bill-trend-up"></i> Affiliation : ${commissionPct}% (${valeurCommission} FCFA)</span>
                     </div>
 
                     <div style="text-align:center; font-size:11px; color:var(--texte-gris); margin-top:10px;">Scan pour voir la fiche produit :</div>
@@ -432,7 +440,6 @@
                         <button class="btn-action btn-momo" onclick="window.open('${lienMomo}', '_blank')"><i class="fa-solid fa-mobile-screen"></i> Mobile Money</button>
                         ${art.crypto_wallet ? `<button class="btn-action btn-crypto" onclick="navigator.clipboard.writeText('${art.crypto_wallet}'); alert('Adresse Crypto copiée !')"><i class="fa-brands fa-ethereum"></i> Pay Crypto</button>` : ''}
                         
-                        <!-- BOUTON D'AFFILIATION SUPRÊME -->
                         <button class="btn-action btn-aff" onclick="genererLienAffiliation(${art.id}, '${art.nom}')">
                             <i class="fa-solid fa-link"></i> Devenir Affilié (Gagner ${valeurCommission} FCFA)
                         </button>
@@ -443,7 +450,7 @@
                 container.appendChild(carte);
 
                 new QRCode(document.getElementById(`qr-${art.id}`), {
-                    text: window.location.href,
+                    text: `${window.location.origin}${window.location.pathname}?product=${art.id}`,
                     width: 80,
                     height: 80
                 });
@@ -455,23 +462,20 @@
             const nomAffilie = prompt("Entrez votre Prénom + Numéro WhatsApp pour créer votre lien d'affilié (Ex: Moussa23566...) :");
             if(!nomAffilie) return;
 
-            // Construit l'adresse URL d'affiliation unique
             const cleanRef = nomAffilie.replace(/[^a-zA-Z0-9]/g, "");
             const lienAffiliationUnique = `${window.location.origin}${window.location.pathname}?product=${idArticle}&ref=${cleanRef}`;
 
-            // Copie automatique dans le presse-papier de l'affilié
             navigator.clipboard.writeText(lienAffiliationUnique);
-
             alert(`🎉 Félicitations ! Votre lien d'affilié pour "${nomArticle}" a été généré et copié !\n\nPartagez-le partout. Si quelqu'un achète via ce lien, le vendeur saura que c'est grâce à vous (${cleanRef}).\n\nLien : ${lienAffiliationUnique}`);
         }
 
         function partagerLienGlobal(nom, prix) {
             const txt = `🔥 *PRODUIT DISPONIBLE SUR VENDSTOC* 🔥\n\n📦 *Article :* ${nom.toUpperCase()}\n💰 *Prix :* ${prix.toLocaleString()} FCFA\n\nDécouvrez-le ici : ${window.location.href}`;
             if(navigator.share) { navigator.share({ title: nom, text: txt }); } 
-            else { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`, '_blank'); }
+            else { window.open haste(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`, '_blank'); }
         }
 
         window.onload = function() { chargerArticlesMondiaux(); };
     </script>
 </body>
-                </html>
+                    </html>
