@@ -7,55 +7,248 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
+    
     <style>
-        :root { --bg-p: #121214; --bg-c: #1e1e24; --v-wa: #25D366; --b-sh: #0077b6; --o-cr: #f7931a; --v-af: #9b5de5; --t-b: #ffffff; --t-g: #a0a0b0; --r-ab: #ef4444; --b-st: #635bff; }
-        body { font-family: sans-serif; background-color: var(--bg-p); color: var(--t-b); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
-        .container { width: 100%; max-width: 480px; }
-        .header { text-align: center; margin-bottom: 20px; }
-        .header h1 { color: var(--v-wa); margin: 5px 0; }
-        .status-bar { background-color: var(--bg-c); border-radius: 12px; padding: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .status-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; background-color: var(--v-wa); }
-        .status-dot.absent { background-color: var(--r-ab); }
-        .status-toggle-btn { background-color: var(--bg-p); border: 1px solid #444; color: white; padding: 6px 12px; border-radius: 20px; cursor: pointer; }
-        .navigation-tabs { display: flex; background-color: var(--bg-c); padding: 5px; border-radius: 30px; margin-bottom: 20px; }
-        .tab-btn { flex: 1; background: none; border: none; color: var(--t-g); padding: 12px; font-weight: bold; cursor: pointer; border-radius: 25px; }
-        .tab-btn.active { background-color: var(--v-wa); color: var(--bg-p); }
-        .app-section { display: none; background-color: var(--bg-c); padding: 20px; border-radius: 15px; }
-        .app-section.active { display: block; }
-        .form-group { margin-bottom: 15px; }
-        input[type="text"], input[type="number"], .search-bar { width: 100%; padding: 14px; border-radius: 8px; border: 1px solid #333; background-color: var(--bg-p); color: white; box-sizing: border-box; }
-        .custom-file-upload { display: flex; align-items: center; justify-content: center; gap: 10px; border: 2px dashed #444; padding: 18px; border-radius: 8px; cursor: pointer; background-color: var(--bg-p); }
-        .btn-principal { width: 100%; background-color: var(--v-wa); color: var(--bg-p); border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
-        .grid-vitrine { display: flex; flex-direction: column; gap: 15px; margin-top: 15px; }
-        .product-card { background-color: var(--bg-p); border-radius: 12px; padding: 15px; border: 1px solid #222; display: flex; flex-direction: column; gap: 10px; }
-        .product-card img { width: 100%; height: 220px; object-fit: cover; border-radius: 8px; }
-        .action-buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-        .btn-action { padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        :root { 
+            --bg-p: #121214; 
+            --bg-c: #1e1e24; 
+            --v-wa: #25D366; 
+            --b-sh: #0077b6; 
+            --o-cr: #f7931a; 
+            --v-af: #9b5de5; 
+            --t-b: #ffffff; 
+            --t-g: #a0a0b0; 
+            --r-ab: #ef4444; 
+            --b-st: #635bff; 
+        }
+
+        body { 
+            font-family: sans-serif; 
+            background-color: var(--bg-p); 
+            color: var(--t-b); 
+            margin: 0; 
+            padding: 15px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+        }
+
+        .container { 
+            width: 100%; 
+            max-width: 480px; 
+        }
+
+        .header { 
+            text-align: center; 
+            margin-bottom: 20px; 
+        }
+
+        .header h1 { 
+            color: var(--v-wa); 
+            margin: 5px 0; 
+        }
+
+        .status-bar { 
+            background-color: var(--bg-c); 
+            border-radius: 12px; 
+            padding: 12px; 
+            margin-bottom: 15px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+
+        .status-dot { 
+            width: 12px; 
+            height: 12px; 
+            border-radius: 50%; 
+            display: inline-block; 
+            background-color: var(--v-wa); 
+        }
+
+        .status-dot.absent { 
+            background-color: var(--r-ab); 
+        }
+
+        .status-toggle-btn { 
+            background-color: var(--bg-p); 
+            border: 1px solid #444; 
+            color: white; 
+            padding: 6px 12px; 
+            border-radius: 20px; 
+            cursor: pointer; 
+        }
+
+        .navigation-tabs { 
+            display: flex; 
+            background-color: var(--bg-c); 
+            padding: 5px; 
+            border-radius: 30px; 
+            margin-bottom: 20px; 
+        }
+
+        .tab-btn { 
+            flex: 1; 
+            background: none; 
+            border: none; 
+            color: var(--t-g); 
+            padding: 12px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            border-radius: 25px; 
+        }
+
+        .tab-btn.active { 
+            background-color: var(--v-wa); 
+            color: var(--bg-p); 
+        }
+
+        .app-section { 
+            display: none; 
+            background-color: var(--bg-c); 
+            padding: 20px; 
+            border-radius: 15px; 
+        }
+
+        .app-section.active { 
+            display: block; 
+        }
+
+        .form-group { 
+            margin-bottom: 15px; 
+        }
+
+        input[type="text"], input[type="number"], .search-bar { 
+            width: 100%; 
+            padding: 14px; 
+            border-radius: 8px; 
+            border: 1px solid #333; 
+            background-color: var(--bg-p); 
+            color: white; 
+            box-sizing: border-box; 
+        }
+
+        .custom-file-upload { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+            border: 2px dashed #444; 
+            padding: 18px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            background-color: var(--bg-p); 
+        }
+
+        .btn-principal { 
+            width: 100%; 
+            background-color: var(--v-wa); 
+            color: var(--bg-p); 
+            border: none; 
+            padding: 14px; 
+            border-radius: 8px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            cursor: pointer; 
+        }
+
+        .grid-vitrine { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            margin-top: 15px; 
+        }
+
+        .product-card { 
+            background-color: var(--bg-p); 
+            border-radius: 12px; 
+            padding: 15px; 
+            border: 1px solid #222; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            height: auto; 
+        }
+
+        .product-card img { 
+            width: 100%; 
+            height: auto; 
+            max-height: 240px; 
+            object-fit: contain; 
+            border-radius: 8px; 
+            background-color: #000000; 
+        }
+
+        .action-buttons { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 8px; 
+        }
+
+        .btn-action { 
+            padding: 10px; 
+            border: none; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 5px; 
+        }
+
         .btn-wa { background-color: var(--v-wa); color: #121214; }
         .btn-momo { background-color: #833ab4; }
         .btn-stripe { background-color: var(--b-st); }
         .btn-crypto { background-color: var(--o-cr); }
-        .qr-container { display: flex; justify-content: center; background: white; padding: 5px; border-radius: 8px; width: 70px; height: 70px; margin: 5px auto; }
+        
+        .qr-container { 
+            display: flex; 
+            justify-content: center; 
+            background: white; 
+            padding: 5px; 
+            border-radius: 8px; 
+            width: 70px; 
+            height: 70px; 
+            margin: 5px auto; 
+        }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <div class="header"><h1>VENDSTOC APP 🚀</h1><p>Live Vidéo • Saisie Vocale • Paiements Multiples</p></div>
+        <div class="header">
+            <h1>VENDSTOC APP 🚀</h1>
+            <p>Live Vidéo • Saisie Vocale • Paiements Multiples</p>
+        </div>
+
         <div class="status-bar">
-            <div><span id="vendeur-dot" class="status-dot"></span> <span id="vendeur-status-text">Statut : En Ligne</span></div>
+            <div>
+                <span id="vendeur-dot" class="status-dot"></span> 
+                <span id="vendeur-status-text">Statut : En Ligne</span>
+            </div>
             <button class="status-toggle-btn" onclick="basculerStatutVendeur()">Changer</button>
         </div>
+
         <div class="navigation-tabs">
             <button id="btn-tab-vitrine" class="tab-btn active" onclick="changerOnglet('vitrine')">Vitrine</button>
             <button id="btn-tab-ajouter" class="tab-btn" onclick="changerOnglet('ajouter')">Publier</button>
         </div>
+
         <div id="section-vitrine" class="app-section active">
             <input type="text" id="barre-recherche" class="search-bar" placeholder="🔍 Rechercher un article" oninput="filtrerArticles()">
             <div class="grid-vitrine" id="vitrine-container"></div>
         </div>
+
         <div id="section-ajouter" class="app-section">
             <h2>Enregistrer une Marchandise</h2>
-            <div class="form-group"><label for="img-input" class="custom-file-upload"><span id="file-label">📸 Ajouter une Photo</span></label><input type="file" id="img-input" accept="image/*" onchange="mettreAJourNomFichier()"></div>
+            <div class="form-group">
+                <label for="img-input" class="custom-file-upload">
+                    <span id="file-label">📸 Ajouter une Photo</span>
+                </label>
+                <input type="file" id="img-input" accept="image/*" onchange="mettreAJourNomFichier()">
+            </div>
             <div class="form-group"><input type="text" id="p-nom" placeholder="Nom de l'article"></div>
             <div class="form-group"><input type="number" id="p-prix" placeholder="Prix en FCFA"></div>
             <div class="form-group"><input type="number" id="p-commission" value="10" placeholder="Commission %"></div>
@@ -64,73 +257,202 @@
             <button class="btn-principal" onclick="publierSurLeMonde()">Enregistrer l'article</button>
         </div>
     </div>
+
     <script>
+        // Configuration API
         const SUPABASE_URL = "https://ekmlcvyrjlenujvlixik.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVrbWxjdnlyamxlbnVqdmxpeGlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDUzODUsImV4cCI6MjA5NzAyMTM4NX0.Y1f8Ogp-RfE_wvJi4GCz8BdwMsjZ3YM8tggHveByNQw";
         const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dvoya2e3o/image/upload";
         const UPLOAD_PRESET = "ml_default";
         
-        // ⚠️ REMPLACE ICI PAR TA CLÉ PUBLIQUE STRIPE (pk_live_... ou pk_test_...)
+        // Configuration Stripe
         const STRIPE_PUBLIC_KEY = "pk_test_VOTRE_CLE_PUBLIQUE_ICI"; 
         const stripe = typeof Stripe !== 'undefined' ? Stripe(STRIPE_PUBLIC_KEY) : null;
 
-        let tousLesArticles = [], estAbsent = false;
+        let tousLesArticles = [];
+        let estAbsent = false;
 
+        // Gestion du Statut
         function basculerStatutVendeur() {
             estAbsent = !estAbsent;
             document.getElementById('vendeur-dot').className = estAbsent ? "status-dot absent" : "status-dot";
             document.getElementById('vendeur-status-text').innerText = estAbsent ? "Statut : Absent (IA 🤖)" : "Statut : En Ligne";
             filtrerArticles();
         }
-        function changerOnglet(c) {
-            document.querySelectorAll('.app-section, .tab-btn').forEach(e => e.classList.remove('active'));
-            document.getElementById(`section-${c}`).classList.add('active');
-            document.getElementById(`btn-tab-${c}`).classList.add('active');
-            if(c === 'vitrine') chargerArticlesMondiaux();
+
+        // Navigation
+        function changerOnglet(ongletCible) {
+            document.querySelectorAll('.app-section, .tab-btn').forEach(element => element.classList.remove('active'));
+            document.getElementById(`section-${ongletCible}`).classList.add('active');
+            document.getElementById(`btn-tab-${ongletCible}`).classList.add('active');
+            if(ongletCible === 'vitrine') chargerArticlesMondiaux();
         }
-        function mettreAJourNomFichier() { const i = document.getElementById('img-input'); if(i.files[0]) document.getElementById('file-label').innerText = "📸 " + i.files[0].name; }
-        function filtrerArticles() { const r = document.getElementById('barre-recherche').value.toLowerCase().trim(); afficherVitrine(tousLesArticles.filter(a => a.nom && a.nom.toLowerCase().includes(r))); }
-        
-        async function publierSurLeMonde() {
-            const nom = document.getElementById('p-nom').value.trim(), prix = document.getElementById('p-prix').value.trim(), whatsapp = document.getElementById('p-whatsapp').value.trim(), crypto = document.getElementById('p-crypto').value.trim(), file = document.getElementById('img-input').files[0];
-            if (!nom || !prix || !whatsapp) return alert("Remplissez les champs obligatoires.");
-            let url = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400";
-            if (file) {
-                const fd = new FormData(); fd.append('file', file); fd.append('upload_preset', UPLOAD_PRESET);
-                try { const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: fd }); const d = await res.json(); if(d.secure_url) url = d.secure_url; } catch(e){}
+
+        function mettreAJourNomFichier() { 
+            const input = document.getElementById('img-input'); 
+            if(input.files[0]) {
+                document.getElementById('file-label').innerText = "📸 " + input.files[0].name; 
             }
-            try {
-                const r = await fetch(`${SUPABASE_URL}/rest/v1/articles`, { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ nom, prix: parseInt(prix), image: url, whatsapp, crypto_wallet: crypto, commission_pct: parseInt(document.getElementById('p-commission').value)||10 }) });
-                if(r.ok) { alert("🚀 Enregistré !"); changerOnglet('vitrine'); }
-            } catch(e){}
         }
-        async function chargerArticlesMondiaux() {
-            try { const r = await fetch(`${SUPABASE_URL}/rest/v1/articles?order=created_at.desc`, { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }); if(r.ok) { tousLesArticles = await r.json(); filtrerArticles(); } } catch(e){}
+
+        function filtrerArticles() { 
+            const recherche = document.getElementById('barre-recherche').value.toLowerCase().trim(); 
+            const articlesFiltres = tousLesArticles.filter(a => a.nom && a.nom.toLowerCase().includes(recherche));
+            afficherVitrine(articlesFiltres); 
         }
-        function executerCommande(id, nom, prix, wa) { window.open(`https://api.whatsapp.com/send?phone=${wa}&text=${encodeURIComponent(estAbsent ? `[BOT_AUTO] Intérêt pour *${nom}* - ${prix} FCFA` : `Bonjour, je veux commander *${nom}*`)}`, '_blank'); }
         
+        // Envoi des données vers Cloudinary et Supabase
+        async function publierSurLeMonde() {
+            const nom = document.getElementById('p-nom').value.trim();
+            const prix = document.getElementById('p-prix').value.trim();
+            const whatsapp = document.getElementById('p-whatsapp').value.trim();
+            const crypto = document.getElementById('p-crypto').value.trim();
+            const file = document.getElementById('img-input').files[0];
+            const commission = document.getElementById('p-commission').value || 10;
+
+            if (!nom || !prix || !whatsapp) {
+                return alert("Veuillez remplir les champs obligatoires (Nom, Prix, WhatsApp).");
+            }
+
+            // Image par défaut si aucun upload ne réussit
+            let finalImageUrl = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400";
+
+            if (file) {
+                const formData = new FormData(); 
+                formData.append('file', file); 
+                formData.append('upload_preset', UPLOAD_PRESET);
+                
+                try { 
+                    const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData }); 
+                    const data = await res.json(); 
+                    if(data.secure_url) {
+                        finalImageUrl = data.secure_url; 
+                    }
+                } catch(err) {
+                    console.error("Erreur lors de l'envoi de l'image à Cloudinary :", err);
+                }
+            }
+
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/articles`, { 
+                    method: 'POST', 
+                    headers: { 
+                        'apikey': SUPABASE_KEY, 
+                        'Authorization': `Bearer ${SUPABASE_KEY}`, 
+                        'Content-Type': 'application/json' 
+                    }, 
+                    body: JSON.stringify({ 
+                        nom: nom, 
+                        prix: parseInt(prix), 
+                        image: finalImageUrl, // Enregistre dans la colonne 'image'
+                        url_image: finalImageUrl, // Enregistre aussi dans 'url_image' au cas où !
+                        whatsapp: whatsapp, 
+                        crypto_wallet: crypto, 
+                        commission_pct: parseInt(commission)
+                    }) 
+                });
+
+                if(response.ok) { 
+                    alert("🚀 Article enregistré avec succès !"); 
+                    // Réinitialisation du formulaire
+                    document.getElementById('p-nom').value = "";
+                    document.getElementById('p-prix').value = "";
+                    document.getElementById('p-whatsapp').value = "";
+                    document.getElementById('p-crypto').value = "";
+                    document.getElementById('img-input').value = "";
+                    document.getElementById('file-label').innerText = "📸 Ajouter une Photo";
+                    changerOnglet('vitrine'); 
+                } else {
+                    alert("Erreur lors de la sauvegarde sur Supabase.");
+                }
+            } catch(err) {
+                alert("Erreur de connexion réseau.");
+            }
+        }
+
+        // Récupération depuis Supabase
+        async function chargerArticlesMondiaux() {
+            try { 
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/articles?order=created_at.desc`, { 
+                    headers: { 
+                        'apikey': SUPABASE_KEY, 
+                        'Authorization': `Bearer ${SUPABASE_KEY}` 
+                    } 
+                }); 
+                if(response.ok) { 
+                    tousLesArticles = await response.json(); 
+                    filtrerArticles(); 
+                } 
+            } catch(err) {
+                console.error("Impossible de récupérer les articles :", err);
+            }
+        }
+
+        function executerCommande(id, nom, prix, wa) { 
+            const msg = estAbsent ? `[BOT_AUTO] Intérêt pour *${nom}* - ${prix} FCFA` : `Bonjour, je veux commander *${nom}*`;
+            window.open(`https://api.whatsapp.com/send?phone=${wa}&text=${encodeURIComponent(msg)}`, '_blank'); 
+        }
+        
+        // Rendu de l'affichage
         function afficherVitrine(liste) {
-            const c = document.getElementById('vitrine-container'); c.innerHTML = "";
-            liste.forEach(a => {
-                const card = document.createElement('div'); card.className = "product-card";
+            const container = document.getElementById('vitrine-container'); 
+            container.innerHTML = "";
+            
+            if(liste.length === 0) {
+                container.innerHTML = "<p style='color:var(--t-g); text-align:center; padding:20px;'>Aucun article trouvé.</p>";
+                return;
+            }
+
+            liste.forEach(article => {
+                const card = document.createElement('div'); 
+                card.className = "product-card";
+                
+                // Détection de l'URL de l'image (prend en charge 'image' ou 'url_image')
+                const srcImage = article.image || article.url_image || "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400";
+                const cleanNom = article.nom ? article.nom.replace(/'/g, "\\'") : "Article";
+                const cleanPrix = article.prix || 0;
+                const cleanWhatsApp = article.whatsapp || "";
+
                 card.innerHTML = `
-                    <img src="${a.image}" alt="${a.nom}">
-                    <h3>${a.nom}</h3><div style="font-size:20px; font-weight:bold; color:var(--v-wa);">${a.prix.toLocaleString()} FCFA</div>
+                    <img src="${srcImage}" alt="${cleanNom}">
+                    <h3>${article.nom || 'Sans titre'}</h3>
+                    <div style="font-size:20px; font-weight:bold; color:var(--v-wa);">${cleanPrix.toLocaleString()} FCFA</div>
                     <div class="action-buttons">
-                        <button class="btn-action btn-wa" onclick="executerCommande('${a.id}','${a.nom.replace(/'/g,"\\'")}',${a.prix},'${a.whatsapp}')">Commander</button>
-                        <button class="btn-action btn-momo" onclick="alert('Guichet MoMo : ${a.prix} FCFA')">Mobile Money</button>
-                        <button class="btn-action btn-stripe" onclick="ouvrirPaiementStripe('${a.id}','${a.nom.replace(/'/g,"\\'")}',${a.prix})">Carte/MasterCard</button>
-                        ${a.crypto_wallet ? `<button class="btn-action btn-crypto" onclick="alert('Portefeuille vendeur :\\n${a.crypto_wallet}')">Crypto</button>` : ''}
-                    </div><div class="qr-container" id="qr-${a.id}"></div>`;
-                c.appendChild(card); new QRCode(document.getElementById(`qr-${a.id}`), { text: window.location.href.split('?')[0] + `?product=${a.id}`, width: 60, height: 60 });
+                        <button class="btn-action btn-wa" onclick="executerCommande('${article.id}', '${cleanNom}', ${cleanPrix}, '${cleanWhatsApp}')">Commander</button>
+                        <button class="btn-action btn-momo" onclick="alert('Guichet MoMo : ${cleanPrix} FCFA')">Mobile Money</button>
+                        <button class="btn-action btn-stripe" onclick="ouvrirPaiementStripe('${article.id}', '${cleanNom}', ${cleanPrix})">Carte/MasterCard</button>
+                        ${article.crypto_wallet ? `<button class="btn-action btn-crypto" onclick="alert('Portefeuille vendeur :\\n${article.crypto_wallet}')">Crypto</button>` : ''}
+                    </div>
+                    <div class="qr-container" id="qr-${article.id}"></div>
+                `;
+                container.appendChild(card); 
+                
+                // Génération du QR Code
+                const cleanUrl = window.location.href.split('?')[0] + `?product=${article.id}`;
+                new QRCode(document.getElementById(`qr-${article.id}`), { text: cleanUrl, width: 60, height: 60 });
             });
         }
+
+        // Action d'appel Stripe
         async function ouvrirPaiementStripe(id, nom, prix) {
             try {
-                const r = await fetch('https://votre-serveur-backend.com/create-checkout-session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ productId: id, productName: nom, amount: prix, currency: 'xaf' }) });
-                const s = await r.json(); if (s.id) stripe.redirectToCheckout({ sessionId: s.id }); else alert("Erreur Stripe");
-            } catch(e) { alert("Indisponible"); }
+                const response = await fetch('https://votre-serveur-backend.com/create-checkout-session', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ productId: id, productName: nom, amount: prix, currency: 'xaf' }) 
+                });
+                const session = await response.json(); 
+                if (session.id) {
+                    stripe.redirectToCheckout({ sessionId: session.id }); 
+                } else {
+                    alert("Erreur de communication avec Stripe.");
+                }
+            } catch(e) { 
+                alert("Le service de paiement par carte est actuellement indisponible."); 
+            }
         }
+
+        // Chargement initial
         window.onload = chargerArticlesMondiaux;
     </script>
 </body>
