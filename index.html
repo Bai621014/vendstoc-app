@@ -6,539 +6,132 @@
     <title>VENDSTOC APP 🚀</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
     <style>
-        :root {
-            --bg-principal: #121214;
-            --bg-carte: #1e1e24;
-            --vert-whatsapp: #25D366;
-            --bleu-partage: #0077b6;
-            --orange-crypto: #f7931a;
-            --violet-affiliation: #9b5de5;
-            --texte-blanc: #ffffff;
-            --texte-gris: #a0a0b0;
-            --rouge-absent: #ef4444;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-principal);
-            color: var(--texte-blanc);
-            margin: 0;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 480px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .header h1 {
-            color: var(--vert-whatsapp);
-            margin: 5px 0;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .header p {
-            color: var(--texte-gris);
-            font-size: 13px;
-            margin: 5px 0;
-        }
-
-        /* Sélecteur de statut vendeur */
-        .status-bar {
-            background-color: var(--bg-carte);
-            border-radius: 12px;
-            padding: 12px 15px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #2d2d35;
-        }
-
-        .status-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-            background-color: var(--vert-whatsapp);
-        }
-
-        .status-dot.absent {
-            background-color: var(--rouge-absent);
-        }
-
-        .status-toggle-btn {
-            background-color: var(--bg-principal);
-            border: 1px solid #444;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-            transition: all 0.2s ease;
-        }
-
-        .status-toggle-btn:hover {
-            border-color: var(--texte-gris);
-        }
-
-        .navigation-tabs {
-            display: flex;
-            justify-content: space-between;
-            background-color: var(--bg-carte);
-            padding: 5px;
-            border-radius: 30px;
-            margin-bottom: 20px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            background: none;
-            border: none;
-            color: var(--texte-gris);
-            padding: 12px 5px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .tab-btn.active {
-            background-color: var(--vert-whatsapp);
-            color: var(--bg-principal);
-        }
-
-        .app-section {
-            display: none;
-            background-color: var(--bg-carte);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-        }
-
-        .app-section.active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        input[type="text"], input[type="number"], .search-bar {
-            width: 100%;
-            padding: 14px;
-            border-radius: 8px;
-            border: 1px solid #333;
-            background-color: var(--bg-principal);
-            color: white;
-            box-sizing: border-box;
-            font-size: 15px;
-            outline: none;
-        }
-        
-        input:focus, .search-bar:focus {
-            border-color: var(--vert-whatsapp);
-        }
-
-        .search-container {
-            position: relative;
-            margin-bottom: 15px;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        .custom-file-upload {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            border: 2px dashed #444;
-            padding: 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            color: var(--texte-blanc);
-            background-color: var(--bg-principal);
-            font-weight: bold;
-            font-size: 15px;
-            margin-bottom: 15px;
-            transition: background 0.2s ease;
-        }
-        
-        .custom-file-upload:hover {
-            background-color: #1c1c21;
-        }
-
-        .btn-principal {
-            width: 100%;
-            background-color: var(--vert-whatsapp);
-            color: var(--bg-principal);
-            border: none;
-            padding: 14px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: transform 0.1s ease;
-        }
-        
-        .btn-principal:active {
-            transform: scale(0.98);
-        }
-
-        .grid-vitrine {
-            display: grid;
-            grid-template-columns: repeat(1, 1fr);
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .product-card {
-            background-color: var(--bg-principal);
-            border-radius: 12px;
-            padding: 15px;
-            border: 1px solid #222;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .product-card img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .action-buttons {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-        }
-
-        .btn-action {
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 13px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            color: white;
-            transition: opacity 0.2s ease;
-        }
-        
-        .btn-action:hover {
-            opacity: 0.9;
-        }
-
-        .btn-wa { background-color: var(--vert-whatsapp); color: #121214; }
+        :root { --bg-p: #121214; --bg-c: #1e1e24; --v-wa: #25D366; --b-sh: #0077b6; --o-cr: #f7931a; --v-af: #9b5de5; --t-b: #ffffff; --t-g: #a0a0b0; --r-ab: #ef4444; --b-st: #635bff; }
+        body { font-family: sans-serif; background-color: var(--bg-p); color: var(--t-b); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 100%; max-width: 480px; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { color: var(--v-wa); margin: 5px 0; }
+        .status-bar { background-color: var(--bg-c); border-radius: 12px; padding: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .status-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; background-color: var(--v-wa); }
+        .status-dot.absent { background-color: var(--r-ab); }
+        .status-toggle-btn { background-color: var(--bg-p); border: 1px solid #444; color: white; padding: 6px 12px; border-radius: 20px; cursor: pointer; }
+        .navigation-tabs { display: flex; background-color: var(--bg-c); padding: 5px; border-radius: 30px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; background: none; border: none; color: var(--t-g); padding: 12px; font-weight: bold; cursor: pointer; border-radius: 25px; }
+        .tab-btn.active { background-color: var(--v-wa); color: var(--bg-p); }
+        .app-section { display: none; background-color: var(--bg-c); padding: 20px; border-radius: 15px; }
+        .app-section.active { display: block; }
+        .form-group { margin-bottom: 15px; }
+        input[type="text"], input[type="number"], .search-bar { width: 100%; padding: 14px; border-radius: 8px; border: 1px solid #333; background-color: var(--bg-p); color: white; box-sizing: border-box; }
+        .custom-file-upload { display: flex; align-items: center; justify-content: center; gap: 10px; border: 2px dashed #444; padding: 18px; border-radius: 8px; cursor: pointer; background-color: var(--bg-p); }
+        .btn-principal { width: 100%; background-color: var(--v-wa); color: var(--bg-p); border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .grid-vitrine { display: flex; flex-direction: column; gap: 15px; margin-top: 15px; }
+        .product-card { background-color: var(--bg-p); border-radius: 12px; padding: 15px; border: 1px solid #222; display: flex; flex-direction: column; gap: 10px; }
+        .product-card img { width: 100%; height: 220px; object-fit: cover; border-radius: 8px; }
+        .action-buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .btn-action { padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .btn-wa { background-color: var(--v-wa); color: #121214; }
         .btn-momo { background-color: #833ab4; }
-        .btn-crypto { background-color: var(--orange-crypto); }
-        .btn-aff { background-color: var(--violet-affiliation); grid-column: span 2; }
-        .btn-sh { background-color: var(--bleu-partage); grid-column: span 2; }
-
-        .qr-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: white;
-            padding: 5px;
-            border-radius: 8px;
-            width: 80px;
-            height: 80px;
-            margin: 5px auto;
-        }
-
-        .badge-commission {
-            background-color: var(--violet-affiliation);
-            color: white;
-            font-size: 11px;
-            padding: 5px 8px;
-            border-radius: 20px;
-            font-weight: bold;
-            display: inline-block;
-        }
-        
-        .loading-spinner {
-            text-align: center;
-            padding: 20px;
-            color: var(--texte-gris);
-        }
+        .btn-stripe { background-color: var(--b-st); }
+        .btn-crypto { background-color: var(--o-cr); }
+        .qr-container { display: flex; justify-content: center; background: white; padding: 5px; border-radius: 8px; width: 70px; height: 70px; margin: 5px auto; }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <div class="header">
-            <h1>VENDSTOC APP 🚀</h1>
-            <p>Live Vidéo • Saisie Vocale • Facture Signée</p>
-        </div>
-
+        <div class="header"><h1>VENDSTOC APP 🚀</h1><p>Live Vidéo • Saisie Vocale • Paiements Multiples</p></div>
         <div class="status-bar">
-            <div class="status-info">
-                <span id="vendeur-dot" class="status-dot"></span>
-                <span id="vendeur-status-text">Statut : En Ligne</span>
-            </div>
+            <div><span id="vendeur-dot" class="status-dot"></span> <span id="vendeur-status-text">Statut : En Ligne</span></div>
             <button class="status-toggle-btn" onclick="basculerStatutVendeur()">Changer</button>
         </div>
-
         <div class="navigation-tabs">
-            <button id="btn-tab-vitrine" class="tab-btn active" onclick="changerOnglet('vitrine')"><i class="fa-solid fa-bag-shopping"></i> Vitrine</button>
-            <button id="btn-tab-ajouter" class="tab-btn" onclick="changerOnglet('ajouter')"><i class="fa-solid fa-plus"></i> Publier</button>
+            <button id="btn-tab-vitrine" class="tab-btn active" onclick="changerOnglet('vitrine')">Vitrine</button>
+            <button id="btn-tab-ajouter" class="tab-btn" onclick="changerOnglet('ajouter')">Publier</button>
         </div>
-
         <div id="section-vitrine" class="app-section active">
-            <div class="search-container">
-                <input type="text" id="barre-recherche" class="search-bar" placeholder="🔍 Rechercher un article (ex: Chaussures)" oninput="filtrerArticles()">
-            </div>
-
-            <h2><i class="fa-solid fa-earth-africa" style="color:var(--vert-whatsapp)"></i> Articles en Temps Réel</h2>
+            <input type="text" id="barre-recherche" class="search-bar" placeholder="🔍 Rechercher un article" oninput="filtrerArticles()">
             <div class="grid-vitrine" id="vitrine-container"></div>
         </div>
-
         <div id="section-ajouter" class="app-section">
-            <h2><i class="fa-solid fa-cart-plus"></i> Enregistrer une Marchandise</h2>
-            
-            <div class="form-group">
-                <label for="img-input" class="custom-file-upload">
-                    <i class="fa-solid fa-camera fa-lg" style="color: var(--vert-whatsapp);"></i> 
-                    <span id="file-label">Ajouter ou Prendre une Photo</span>
-                </label>
-                <input type="file" id="img-input" accept="image/*" onchange="mettreAJourNomFichier()">
-            </div>
-
-            <div class="form-group">
-                <input type="text" id="p-nom" placeholder="Nom de l'article (ex: Chaussures)">
-            </div>
-
-            <div class="form-group">
-                <input type="number" id="p-prix" placeholder="Prix en FCFA">
-            </div>
-
-            <div class="form-group">
-                <input type="number" id="p-commission" placeholder="Commission Affiliation %" value="10">
-            </div>
-
-            <div class="form-group">
-                <input type="text" id="p-whatsapp" placeholder="N° WhatsApp Vendeur (ex: 23566000000)">
-            </div>
-
-            <div class="form-group">
-                <input type="text" id="p-crypto" placeholder="Adresse Portefeuille Crypto (Optionnel)">
-            </div>
-
-            <button class="btn-principal" onclick="publierSurLeMonde()"><i class="fa-solid fa-check"></i> Enregistrer l'article</button>
+            <h2>Enregistrer une Marchandise</h2>
+            <div class="form-group"><label for="img-input" class="custom-file-upload"><span id="file-label">📸 Ajouter une Photo</span></label><input type="file" id="img-input" accept="image/*" onchange="mettreAJourNomFichier()"></div>
+            <div class="form-group"><input type="text" id="p-nom" placeholder="Nom de l'article"></div>
+            <div class="form-group"><input type="number" id="p-prix" placeholder="Prix en FCFA"></div>
+            <div class="form-group"><input type="number" id="p-commission" value="10" placeholder="Commission %"></div>
+            <div class="form-group"><input type="text" id="p-whatsapp" placeholder="N° WhatsApp"></div>
+            <div class="form-group"><input type="text" id="p-crypto" placeholder="Adresse Crypto (Optionnel)"></div>
+            <button class="btn-principal" onclick="publierSurLeMonde()">Enregistrer l'article</button>
         </div>
     </div>
-
     <script>
         const SUPABASE_URL = "https://ekmlcvyrjlenujvlixik.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVrbWxjdnlyamxlbnVqdmxpeGlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDUzODUsImV4cCI6MjA5NzAyMTM4NX0.Y1f8Ogp-RfE_wvJi4GCz8BdwMsjZ3YM8tggHveByNQw";
-
         const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dvoya2e3o/image/upload";
-        const UPLOAD_PRESET = "ml_default"; 
+        const UPLOAD_PRESET = "ml_default";
+        
+        // ⚠️ REMPLACE ICI PAR TA CLÉ PUBLIQUE STRIPE (pk_live_... ou pk_test_...)
+        const STRIPE_PUBLIC_KEY = "pk_test_VOTRE_CLE_PUBLIQUE_ICI"; 
+        const stripe = typeof Stripe !== 'undefined' ? Stripe(STRIPE_PUBLIC_KEY) : null;
 
-        // URL de webhook de votre chatbot (ex: Make, n8n, Evolution API, etc.)
-        // À remplacer par votre webhook réel quand la branche Chatbot backend sera déployée
-        const CHATBOT_WEBHOOK_URL = "https://votre-serveur-chatbot.com/api/webhook";
-
-        let tousLesArticles = [];
-        let estAbsent = false; // Stockage local du statut de présence (peut être lié à la BDD globale ultérieurement)
+        let tousLesArticles = [], estAbsent = false;
 
         function basculerStatutVendeur() {
             estAbsent = !estAbsent;
-            const dot = document.getElementById('vendeur-dot');
-            const txt = document.getElementById('vendeur-status-text');
-            
-            if(estAbsent) {
-                dot.className = "status-dot absent";
-                txt.innerText = "Statut : Absent (Chatbot Vente Activé 🤖)";
-            } else {
-                dot.className = "status-dot";
-                txt.innerText = "Statut : En Ligne";
-            }
-            // Recharge la vitrine pour ajuster à la volée le comportement des boutons de commande
+            document.getElementById('vendeur-dot').className = estAbsent ? "status-dot absent" : "status-dot";
+            document.getElementById('vendeur-status-text').innerText = estAbsent ? "Statut : Absent (IA 🤖)" : "Statut : En Ligne";
             filtrerArticles();
         }
-
-        function changerOnglet(cible) {
-            document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            
-            document.getElementById(`section-${cible}`).classList.add('active');
-            document.getElementById(`btn-tab-${cible}`).classList.add('active');
-
-            if(cible === 'vitrine') { chargerArticlesMondiaux(); }
+        function changerOnglet(c) {
+            document.querySelectorAll('.app-section, .tab-btn').forEach(e => e.classList.remove('active'));
+            document.getElementById(`section-${c}`).classList.add('active');
+            document.getElementById(`btn-tab-${c}`).classList.add('active');
+            if(c === 'vitrine') chargerArticlesMondiaux();
         }
-
-        function mettreAJourNomFichier() {
-            const input = document.getElementById('img-input');
-            const label = document.getElementById('file-label');
-            if(input.files && input.files[0]) { label.innerText = "📸 " + input.files[0].name; }
-        }
-
-        function filtrerArticles() {
-            const recherche = document.getElementById('barre-recherche').value.toLowerCase().trim();
-            const articlesFiltres = tousLesArticles.filter(art => art.nom && art.nom.toLowerCase().includes(recherche));
-            afficherVitrine(articlesFiltres);
-        }
-
+        function mettreAJourNomFichier() { const i = document.getElementById('img-input'); if(i.files[0]) document.getElementById('file-label').innerText = "📸 " + i.files[0].name; }
+        function filtrerArticles() { const r = document.getElementById('barre-recherche').value.toLowerCase().trim(); afficherVitrine(tousLesArticles.filter(a => a.nom && a.nom.toLowerCase().includes(r))); }
+        
         async function publierSurLeMonde() {
-            const nom = document.getElementById('p-nom').value.trim();
-            const prix = document.getElementById('p-prix').value.trim();
-            const commission = document.getElementById('p-commission').value.trim();
-            const whatsapp = document.getElementById('p-whatsapp').value.trim();
-            const crypto = document.getElementById('p-crypto').value.trim();
-            const fileInput = document.getElementById('img-input');
-
-            if (!nom || !prix || !whatsapp) {
-                alert("Veuillez remplir au moins le nom, le prix et le numéro WhatsApp.");
-                return;
+            const nom = document.getElementById('p-nom').value.trim(), prix = document.getElementById('p-prix').value.trim(), whatsapp = document.getElementById('p-whatsapp').value.trim(), crypto = document.getElementById('p-crypto').value.trim(), file = document.getElementById('img-input').files[0];
+            if (!nom || !prix || !whatsapp) return alert("Remplissez les champs obligatoires.");
+            let url = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400";
+            if (file) {
+                const fd = new FormData(); fd.append('file', file); fd.append('upload_preset', UPLOAD_PRESET);
+                try { const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: fd }); const d = await res.json(); if(d.secure_url) url = d.secure_url; } catch(e){}
             }
-
-            let urlImage = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400";
-
-            if (fileInput.files && fileInput.files[0]) {
-                const formData = new FormData();
-                formData.append('file', fileInput.files[0]);
-                formData.append('upload_preset', UPLOAD_PRESET);
-
-                try {
-                    const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
-                    const data = await res.json();
-                    if(data.secure_url) urlImage = data.secure_url;
-                } catch (e) { console.error("Erreur image Cloudinary"); }
-            }
-
-            const donnesArticle = { 
-                nom, 
-                prix: parseInt(prix), 
-                image: urlImage, 
-                whatsapp, 
-                crypto_wallet: crypto,
-                commission_pct: parseInt(commission) || 10
-            };
-
             try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/articles`, {
-                    method: 'POST',
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': `Bearer ${SUPABASE_KEY}`,
-                        'Content-Type': 'application/json',
-                        'Prefer': 'return=minimal'
-                    },
-                    body: JSON.stringify(donnesArticle)
-                });
-
-                if(response.ok) {
-                    alert("🚀 Marchandise enregistrée avec succès !");
-                    document.getElementById('p-nom').value = "";
-                    document.getElementById('p-prix').value = "";
-                    document.getElementById('p-whatsapp').value = "";
-                    document.getElementById('p-crypto').value = "";
-                    fileInput.value = "";
-                    document.getElementById('file-label').innerText = "Ajouter ou Prendre une Photo";
-                    changerOnglet('vitrine');
-                } else {
-                    alert("Erreur lors de l'enregistrement de l'article.");
-                }
-            } catch (error) { alert("Erreur de connexion lors de la publication."); }
+                const r = await fetch(`${SUPABASE_URL}/rest/v1/articles`, { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ nom, prix: parseInt(prix), image: url, whatsapp, crypto_wallet: crypto, commission_pct: parseInt(document.getElementById('p-commission').value)||10 }) });
+                if(r.ok) { alert("🚀 Enregistré !"); changerOnglet('vitrine'); }
+            } catch(e){}
         }
-
         async function chargerArticlesMondiaux() {
-            const container = document.getElementById('vitrine-container');
-            container.innerHTML = "<div class='loading-spinner'><i class='fa-solid fa-spinner fa-spin fa-2xl' style='color:var(--vert-whatsapp)'></i><p style='margin-top:10px;'>Chargement des articles...</p></div>";
-
-            try {
-                const res = await fetch(`${SUPABASE_URL}/rest/v1/articles?order=created_at.desc`, {
-                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-                });
-                if(res.ok) {
-                    tousLesArticles = await res.json();
-                    
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const targetProduct = urlParams.get('product');
-                    if(targetProduct) {
-                        tousLesArticles.sort((a, b) => a.id == targetProduct ? -1 : b.id == targetProduct ? 1 : 0);
-                    }
-                    
-                    filtrerArticles();
-                } else {
-                    container.innerHTML = "<p>Erreur lors de la récupération des données.</p>";
-                }
-            } catch (e) { container.innerHTML = "<p>Erreur de synchronisation.</p>"; }
+            try { const r = await fetch(`${SUPABASE_URL}/rest/v1/articles?order=created_at.desc`, { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }); if(r.ok) { tousLesArticles = await r.json(); filtrerArticles(); } } catch(e){}
         }
-
-        // Gère l'action du bouton commander selon le statut de présence
-        function executerCommande(artId, artNom, artPrix, artWhatsapp, parentAffilie) {
-            let texteWA = `Bonjour, je souhaite commander l'article *${artNom}* au prix de ${artPrix} FCFA.`;
-            if(parentAffilie) {
-                texteWA += `\n\n_(Via affilié ID: ${parentAffilie})_`;
-            }
-
-            if (estAbsent) {
-                // Mode AUTO : On injecte un tag d'automatisation [BOT_AUTO] pour notifier le Chatbot à la réception
-                texteWA = `[BOT_AUTO] Commande en cours\nArticle ID: ${artId}\nNom: *${artNom}*\nPrix: ${artPrix} FCFA\nAffilié: ${parentAffilie || 'Aucun'}`;
-                
-                // En option, on envoie simultanément les métadonnées de la commande directement à l'API du Chatbot en arrière-plan
-                fetch(CHATBOT_WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: "initier_vente_auto", produit_id: artId, nom: artNom, prix: artPrix, ref: parentAffilie })
-                }).catch(e => console.log("Webhook optionnel envoyé"));
-            }
-
-            const lienWhatsAppFinal = `https://api.whatsapp.com/send?phone=${artWhatsapp}&text=${encodeURIComponent(texteWA)}`;
-            window.open(lienWhatsAppFinal, '_blank');
-        }
-
+        function executerCommande(id, nom, prix, wa) { window.open(`https://api.whatsapp.com/send?phone=${wa}&text=${encodeURIComponent(estAbsent ? `[BOT_AUTO] Intérêt pour *${nom}* - ${prix} FCFA` : `Bonjour, je veux commander *${nom}*`)}`, '_blank'); }
+        
         function afficherVitrine(liste) {
-            const container = document.getElementById('vitrine-container');
-            container.innerHTML = "";
-
-            if(!liste || liste.length === 0) {
-                container.innerHTML = "<p style='color:var(--texte-gris); text-align:center;'>Aucun article disponible.</p>";
-                return;
-            }
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const parentAffilie = urlParams.get('ref') || "";
-
-            liste.forEach((art) => {
-                const carte = document.createElement('div');
-                carte.className = "product-card";
-                
-                const commissionPct = art.commission_pct || 10;
-                const valeurCommission = (art.prix * commissionPct) / 100;
-                const lienMomo = `https://www.mo
+            const c = document.getElementById('vitrine-container'); c.innerHTML = "";
+            liste.forEach(a => {
+                const card = document.createElement('div'); card.className = "product-card";
+                card.innerHTML = `
+                    <img src="${a.image}" alt="${a.nom}">
+                    <h3>${a.nom}</h3><div style="font-size:20px; font-weight:bold; color:var(--v-wa);">${a.prix.toLocaleString()} FCFA</div>
+                    <div class="action-buttons">
+                        <button class="btn-action btn-wa" onclick="executerCommande('${a.id}','${a.nom.replace(/'/g,"\\'")}',${a.prix},'${a.whatsapp}')">Commander</button>
+                        <button class="btn-action btn-momo" onclick="alert('Guichet MoMo : ${a.prix} FCFA')">Mobile Money</button>
+                        <button class="btn-action btn-stripe" onclick="ouvrirPaiementStripe('${a.id}','${a.nom.replace(/'/g,"\\'")}',${a.prix})">Carte/MasterCard</button>
+                        ${a.crypto_wallet ? `<button class="btn-action btn-crypto" onclick="alert('Portefeuille vendeur :\\n${a.crypto_wallet}')">Crypto</button>` : ''}
+                    </div><div class="qr-container" id="qr-${a.id}"></div>`;
+                c.appendChild(card); new QRCode(document.getElementById(`qr-${a.id}`), { text: window.location.href.split('?')[0] + `?product=${a.id}`, width: 60, height: 60 });
+            });
+        }
+        async function ouvrirPaiementStripe(id, nom, prix) {
+            try {
+                const r = await fetch('https://votre-serveur-backend.com/create-checkout-session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ productId: id, productName: nom, amount: prix, currency: 'xaf' }) });
+                const s = await r.json(); if (s.id) stripe.redirectToCheckout({ sessionId: s.id }); else alert("Erreur Stripe");
+            } catch(e) { alert("Indisponible"); }
+        }
+        window.onload = chargerArticlesMondiaux;
+    </script>
+</body>
+</html>
