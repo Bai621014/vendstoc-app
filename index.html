@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vendstoc App - Global Market & Affiliation</title>
+    <title>VENDSTOC APP 🚀</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
@@ -14,7 +14,6 @@
             --bleu-partage: #0077b6;
             --orange-crypto: #f7931a;
             --violet-affiliation: #9b5de5;
-            --rouge-action: #e63946;
             --texte-blanc: #ffffff;
             --texte-gris: #a0a0b0;
         }
@@ -44,6 +43,13 @@
             color: var(--vert-whatsapp);
             margin: 5px 0;
             font-size: 28px;
+            font-weight: bold;
+        }
+
+        .header p {
+            color: var(--texte-gris);
+            font-size: 13px;
+            margin: 5px 0;
         }
 
         .navigation-tabs {
@@ -94,7 +100,7 @@
 
         input[type="text"], input[type="number"], .search-bar {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             border-radius: 8px;
             border: 1px solid #333;
             background-color: var(--bg-principal);
@@ -107,12 +113,6 @@
             position: relative;
             margin-bottom: 15px;
         }
-        .search-container i {
-            position: absolute;
-            right: 15px;
-            top: 15px;
-            color: var(--texte-gris);
-        }
 
         input[type="file"] {
             display: none;
@@ -124,12 +124,14 @@
             justify-content: center;
             gap: 10px;
             border: 2px dashed #444;
-            padding: 15px;
+            padding: 18px;
             border-radius: 8px;
             cursor: pointer;
-            color: var(--texte-gris);
+            color: var(--texte-blanc);
             background-color: var(--bg-principal);
             font-weight: bold;
+            font-size: 15px;
+            margin-bottom: 15px;
         }
 
         .btn-principal {
@@ -142,6 +144,7 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
+            margin-top: 10px;
         }
 
         .grid-vitrine {
@@ -163,7 +166,7 @@
 
         .product-card img {
             width: 100%;
-            height: 200px;
+            height: 220px;
             object-fit: cover;
             border-radius: 8px;
         }
@@ -219,8 +222,8 @@
 
     <div class="container">
         <div class="header">
-            <h1>VENDSTOC GLOBAL 🌍</h1>
-            <p>Vitrine Connectée, Recherche & Affiliation</p>
+            <h1>VENDSTOC APP 🚀</h1>
+            <p>Live Vidéo • Saisie Vocale • Facture Signée</p>
         </div>
 
         <div class="navigation-tabs">
@@ -228,65 +231,58 @@
             <button id="btn-tab-ajouter" class="tab-btn" onclick="changerOnglet('ajouter')"><i class="fa-solid fa-plus"></i> Publier</button>
         </div>
 
-        <!-- SECTION 1 : VITRINE MONDIALE AVEC BARRE DE RECHERCHE -->
         <div id="section-vitrine" class="app-section active">
-            
-            <!-- Barre de Recherche Dynamique -->
             <div class="search-container">
-                <input type="text" id="barre-recherche" class="search-bar" placeholder="🔍 Rechercher un article (ex: Nike, Sac...)" oninput="filtrerArticles()">
+                <input type="text" id="barre-recherche" class="search-bar" placeholder="🔍 Rechercher un article (ex: Chaussures)" oninput="filtrerArticles()">
             </div>
 
             <h2><i class="fa-solid fa-earth-africa" style="color:var(--vert-whatsapp)"></i> Articles en Temps Réel</h2>
             <div class="grid-vitrine" id="vitrine-container"></div>
         </div>
 
-        <!-- SECTION 2 : FORMULAIRE -->
         <div id="section-ajouter" class="app-section">
-            <h2><i class="fa-solid fa-cart-plus"></i> Infos Marchandise & Vendeur</h2>
+            <h2><i class="fa-solid fa-cart-plus"></i> Enregistrer une Marchandise</h2>
             
             <div class="form-group">
                 <label for="img-input" class="custom-file-upload">
                     <i class="fa-solid fa-camera fa-lg" style="color: var(--vert-whatsapp);"></i> 
-                    <span id="file-label">Prendre la photo du produit</span>
+                    <span id="file-label">Ajouter ou Prendre une Photo</span>
                 </label>
                 <input type="file" id="img-input" accept="image/*" onchange="mettreAJourNomFichier()">
             </div>
 
             <div class="form-group">
-                <input type="text" id="p-nom" placeholder="Nom de l'article">
+                <input type="text" id="p-nom" placeholder="Nom de l'article (ex: Chaussures)">
             </div>
 
             <div class="form-group">
-                <input type="number" id="p-prix" placeholder="Prix de vente (FCFA)">
+                <input type="number" id="p-prix" placeholder="Prix en FCFA">
             </div>
 
             <div class="form-group">
-                <input type="number" id="p-commission" placeholder="Commission Affiliation en % (Ex: 10)" value="10">
+                <input type="number" id="p-commission" placeholder="Commission Affiliation %" value="10">
             </div>
-
-            <h3 style="color:var(--vert-whatsapp); border-top: 1px solid #333; padding-top:15px;"> Coordonnées de Paiement</h3>
 
             <div class="form-group">
                 <input type="text" id="p-whatsapp" placeholder="N° WhatsApp Vendeur (ex: 23566000000)">
             </div>
 
             <div class="form-group">
-                <input type="text" id="p-crypto" placeholder="Adresse Portefeuille Crypto">
+                <input type="text" id="p-crypto" placeholder="Adresse Portefeuille Crypto (Optionnel)">
             </div>
 
-            <button class="btn-principal" onclick="publierSurLeMonde()"><i class="fa-solid fa-paper-plane"></i> Mettre en ligne & Publier</button>
+            <button class="btn-principal" onclick="publierSurLeMonde()"><i class="fa-solid fa-check"></i> Enregistrer l'article</button>
         </div>
     </div>
 
     <script>
-        // --- CONFIGURATION DE TES CONNEXIONS MISES À JOUR ---
         const SUPABASE_URL = "https://ekmlcvyrjlenujvlixik.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVrbWxjdnlyamxlbnVqdmxpeGlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDUzODUsImV4cCI6MjA5NzAyMTM4NX0.Y1f8Ogp-RfE_wvJi4GCz8BdwMsjZ3YM8tggHveByNQw";
 
         const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dvoya2e3o/image/upload";
         const UPLOAD_PRESET = "ml_default"; 
 
-        let tousLesArticles = []; // Stockage local des articles pour la recherche rapide
+        let tousLesArticles = [];
 
         function changerOnglet(cible) {
             document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
@@ -304,14 +300,12 @@
             if(input.files && input.files[0]) { label.innerText = "📸 " + input.files[0].name; }
         }
 
-        // --- FILTRE DYNAMIQUE (BARRE DE RECHERCHE) ---
         function filtrerArticles() {
             const recherche = document.getElementById('barre-recherche').value.toLowerCase().trim();
             const articlesFiltres = tousLesArticles.filter(art => art.nom && art.nom.toLowerCase().includes(recherche));
             afficherVitrine(articlesFiltres);
         }
 
-        // --- PUBLICATION ---
         async function publierSurLeMonde() {
             const nom = document.getElementById('p-nom').value.trim();
             const prix = document.getElementById('p-prix').value.trim();
@@ -321,7 +315,7 @@
             const fileInput = document.getElementById('img-input');
 
             if (!nom || !prix || !whatsapp) {
-                alert("Veuillez remplir au moins le nom, le prix et votre numéro WhatsApp.");
+                alert("Veuillez remplir au moins le nom, le prix et le numéro WhatsApp.");
                 return;
             }
 
@@ -361,25 +355,23 @@
                 });
 
                 if(response.ok) {
-                    alert("🚀 Marchandise publiée avec succès !");
+                    alert("🚀 Marchandise enregistrée avec succès !");
                     document.getElementById('p-nom').value = "";
                     document.getElementById('p-prix').value = "";
                     document.getElementById('p-whatsapp').value = "";
                     document.getElementById('p-crypto').value = "";
                     fileInput.value = "";
-                    document.getElementById('file-label').innerText = "Prendre la photo du produit";
+                    document.getElementById('file-label').innerText = "Ajouter ou Prendre une Photo";
                     changerOnglet('vitrine');
                 } else {
-                    alert("Erreur serveur lors de la publication.");
+                    alert("Erreur lors de l'enregistrement de l'article.");
                 }
-
-            } catch (error) { alert("Erreur réseau lors de la publication."); }
+            } catch (error) { alert("Erreur de connexion lors de la publication."); }
         }
 
-        // --- CHARGEMENT DEPUIS SUPABASE ---
         async function chargerArticlesMondiaux() {
             const container = document.getElementById('vitrine-container');
-            container.innerHTML = "<p>Connexion au marché mondial...</p>";
+            container.innerHTML = "<p>Chargement des articles...</p>";
 
             try {
                 const res = await fetch(`${SUPABASE_URL}/rest/v1/articles?order=created_at.desc`, {
@@ -389,18 +381,17 @@
                     tousLesArticles = await res.json();
                     filtrerArticles();
                 } else {
-                    container.innerHTML = "<p>Erreur de communication avec la base de données.</p>";
+                    container.innerHTML = "<p>Erreur lors de la récupération des données.</p>";
                 }
             } catch (e) { container.innerHTML = "<p>Erreur de synchronisation.</p>"; }
         }
 
-        // --- RENDU GRAPHIQUE DES CARTES ---
         function afficherVitrine(liste) {
             const container = document.getElementById('vitrine-container');
             container.innerHTML = "";
 
             if(!liste || liste.length === 0) {
-                container.innerHTML = "<p>Aucun article ne correspond à votre recherche.</p>";
+                container.innerHTML = "<p style='color:var(--texte-gris); text-align:center;'>Aucun article disponible.</p>";
                 return;
             }
 
@@ -416,7 +407,7 @@
 
                 let texteWA = `Bonjour, je souhaite commander l'article *${art.nom}* au prix de ${art.prix} FCFA.`;
                 if(parentAffilie) {
-                    texteWA += `\n\n_(Commande passée via l'affilié ID: ${parentAffilie})_`;
+                    texteWA += `\n\n_(Via affilié ID: ${parentAffilie})_`;
                 }
                 const lienWA = `https://api.whatsapp.com/send?phone=${art.whatsapp}&text=${encodeURIComponent(texteWA)}`;
                 const lienMomo = `https://www.monetbil.com/pay/v2.1/votre_identifiant_monetbil?amount=${art.prix}`; 
@@ -428,11 +419,11 @@
                         <span style="color:var(--vert-whatsapp); font-weight:bold; font-size:18px;">${(art.prix || 0).toLocaleString()} FCFA</span>
                     </div>
                     
-                    <div style="display:flex; justify-content: space-between; align-items:center; margin-top:5px;">
-                        <span class="badge-commission"><i class="fa-solid fa-money-bill-trend-up"></i> Affiliation : ${commissionPct}% (${valeurCommission} FCFA)</span>
+                    <div style="margin-top:5px;">
+                        <span class="badge-commission"><i class="fa-solid fa-money-bill-trend-up"></i> Gagner ${valeurCommission} FCFA sur ce produit</span>
                     </div>
 
-                    <div style="text-align:center; font-size:11px; color:var(--texte-gris); margin-top:10px;">Scan pour voir la fiche produit :</div>
+                    <div style="text-align:center; font-size:11px; color:var(--texte-gris); margin-top:10px;">Fiche Produit QR :</div>
                     <div class="qr-container" id="qr-${art.id}"></div>
 
                     <div class="action-buttons">
@@ -441,10 +432,10 @@
                         ${art.crypto_wallet ? `<button class="btn-action btn-crypto" onclick="navigator.clipboard.writeText('${art.crypto_wallet}'); alert('Adresse Crypto copiée !')"><i class="fa-brands fa-ethereum"></i> Pay Crypto</button>` : ''}
                         
                         <button class="btn-action btn-aff" onclick="genererLienAffiliation(${art.id}, '${art.nom}')">
-                            <i class="fa-solid fa-link"></i> Devenir Affilié (Gagner ${valeurCommission} FCFA)
+                            <i class="fa-solid fa-link"></i> Devenir Affilié (Prendre ma commission)
                         </button>
 
-                        <button class="btn-action btn-sh" onclick="partagerLienGlobal('${art.nom}', ${art.prix})"><i class="fa-solid fa-share-nodes"></i> Partager</button>
+                        <button class="btn-action btn-sh" onclick="partagerLienGlobal('${art.nom}', ${art.prix})"><i class="fa-solid fa-share-nodes"></i> Partager l'article</button>
                     </div>
                 `;
                 container.appendChild(carte);
@@ -457,25 +448,24 @@
             });
         }
 
-        // --- SYSTEME D'AFFILIATION DYNAMIQUE ---
         function genererLienAffiliation(idArticle, nomArticle) {
-            const nomAffilie = prompt("Entrez votre Prénom + Numéro WhatsApp pour créer votre lien d'affilié (Ex: Moussa23566...) :");
+            const nomAffilie = prompt("Entre ton Prénom + Numéro WhatsApp (Ex: Moussa23566...) :");
             if(!nomAffilie) return;
 
             const cleanRef = nomAffilie.replace(/[^a-zA-Z0-9]/g, "");
             const lienAffiliationUnique = `${window.location.origin}${window.location.pathname}?product=${idArticle}&ref=${cleanRef}`;
 
             navigator.clipboard.writeText(lienAffiliationUnique);
-            alert(`🎉 Félicitations ! Votre lien d'affilié pour "${nomArticle}" a été généré et copié !\n\nPartagez-le partout. Si quelqu'un achète via ce lien, le vendeur saura que c'est grâce à vous (${cleanRef}).\n\nLien : ${lienAffiliationUnique}`);
+            alert(`🎉 Lien copié ! Partage-le. Si un client achète via ce lien, le vendeur saura que c'est grâce à toi (${cleanRef}).`);
         }
 
         function partagerLienGlobal(nom, prix) {
-            const txt = `🔥 *PRODUIT DISPONIBLE SUR VENDSTOC* 🔥\n\n📦 *Article :* ${nom.toUpperCase()}\n💰 *Prix :* ${prix.toLocaleString()} FCFA\n\nDécouvrez-le ici : ${window.location.href}`;
+            const txt = `🔥 PRODUIT DISPONIBLE 🔥\n\n📦 Article : ${nom.toUpperCase()}\n💰 Prix : ${prix.toLocaleString()} FCFA\n\nLien : ${window.location.href}`;
             if(navigator.share) { navigator.share({ title: nom, text: txt }); } 
-            else { window.open haste(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`, '_blank'); }
+            else { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`, '_blank'); }
         }
 
         window.onload = function() { chargerArticlesMondiaux(); };
     </script>
 </body>
-                    </html>
+        </html>
