@@ -14,9 +14,8 @@
             --texte-blanc: #ffffff;
             --texte-gris: #a0a0b0;
         }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: sans-serif;
             background-color: var(--bg-principal);
             color: var(--texte-blanc);
             margin: 0;
@@ -25,31 +24,19 @@
             flex-direction: column;
             align-items: center;
         }
-
         .container {
             width: 100%;
             max-width: 480px;
         }
-
         .header {
             text-align: center;
             margin-bottom: 20px;
         }
-
         .header h1 {
             color: var(--vert-whatsapp);
             margin: 5px 0;
             font-size: 28px;
-            letter-spacing: 1px;
         }
-
-        .header p {
-            color: var(--texte-gris);
-            font-size: 13px;
-            margin: 5px 0;
-        }
-
-        /* Système d'onglets de navigation */
         .navigation-tabs {
             display: flex;
             justify-content: space-between;
@@ -58,7 +45,6 @@
             border-radius: 30px;
             margin-bottom: 20px;
         }
-
         .tab-btn {
             flex: 1;
             background: none;
@@ -69,53 +55,28 @@
             font-weight: bold;
             cursor: pointer;
             border-radius: 25px;
-            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
         }
-
         .tab-btn.active {
             background-color: var(--vert-whatsapp);
             color: var(--bg-principal);
         }
-
-        /* Sections applicatives */
         .app-section {
             display: none;
             background-color: var(--bg-carte);
             padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             margin-bottom: 20px;
         }
-
         .app-section.active {
             display: block;
         }
-
-        h2 {
-            font-size: 20px;
-            margin-top: 0;
-            color: var(--vert-whatsapp);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Formulaires */
         .form-group {
             margin-bottom: 15px;
         }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: var(--texte-gris);
-            font-size: 13px;
-        }
-
         input[type="text"], input[type="number"] {
             width: 100%;
             padding: 12px;
@@ -124,28 +85,7 @@
             background-color: var(--bg-principal);
             color: white;
             box-sizing: border-box;
-            font-size: 15px;
         }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        .custom-file-upload {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            border: 2px dashed var(--texte-gris);
-            padding: 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-            color: var(--texte-gris);
-            background-color: var(--bg-principal);
-        }
-
-        /* Boutons */
         .btn-principal {
             width: 100%;
             background-color: var(--vert-whatsapp);
@@ -156,72 +96,26 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.2s;
         }
-
-        .btn-principal:hover {
-            background-color: #1ebd54;
-        }
-
-        .btn-enregistrement {
-            background-color: var(--rouge-action);
-            color: white;
-            margin-top: 15px;
-        }
-
-        /* Grille Vitrine */
         .grid-vitrine {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
             margin-top: 15px;
         }
-
         .product-card {
             background-color: var(--bg-principal);
             border-radius: 10px;
-            overflow: hidden;
             padding: 10px;
             text-align: center;
             border: 1px solid #222;
-            position: relative;
         }
-
         .product-card img {
             width: 100%;
             height: 120px;
             object-fit: cover;
             border-radius: 8px;
-            background-color: #222;
         }
-
-        /* Statuts et Calculs */
-        .status-box {
-            background-color: var(--bg-principal);
-            padding: 12px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 13px;
-            border-left: 4px solid var(--vert-whatsapp);
-            margin: 15px 0;
-        }
-
-        .finances-box {
-            background-color: var(--bg-principal);
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            border: 1px solid #333;
-        }
-
-        .finances-box p {
-            margin: 6px 0;
-            font-size: 14px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        /* Caméra Live simulation */
         .video-box {
             width: 100%;
             height: 220px;
@@ -231,31 +125,7 @@
             align-items: center;
             justify-content: center;
             color: var(--texte-gris);
-            font-size: 14px;
             margin-bottom: 15px;
-            border: 1px solid #333;
-            position: relative;
-        }
-
-        .badge-live {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background-color: var(--rouge-action);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
-            display: none;
-        }
-
-        .loader-image {
-            position: absolute;
-            top: 40%;
-            left: 45%;
-            color: var(--vert-whatsapp);
-            z-index: 10;
         }
     </style>
 </head>
@@ -264,267 +134,110 @@
     <div class="container">
         <div class="header">
             <h1>VENDSTOC APP 🚀</h1>
-            <p>Live Vidéo • Saisie Vocale • Facture Signée • Répondeur IA</p>
+            <p>Live Vidéo • Saisie Vocale • Facture Signée</p>
         </div>
 
         <div class="navigation-tabs">
-            <button class="tab-btn active" onclick="changerOnglet('live')"><i class="fa-solid fa-tv"></i> Direct Live</button>
-            <button class="tab-btn" onclick="changerOnglet('vitrine')"><i class="fa-solid fa-bag-shopping"></i> Vitrine</button>
-            <button class="tab-btn" onclick="changerOnglet('clients')"><i class="fa-solid fa-phone"></i> Clients</button>
+            <button id="btn-tab-live" class="tab-btn active" onclick="changerOnglet('live')"><i class="fa-solid fa-tv"></i> Direct Live</button>
+            <button id="btn-tab-vitrine" class="tab-btn" onclick="changerOnglet('vitrine')"><i class="fa-solid fa-bag-shopping"></i> Vitrine</button>
+            <button id="btn-tab-clients" class="tab-btn" onclick="changerOnglet('clients')"><i class="fa-solid fa-phone"></i> Clients</button>
         </div>
 
         <div id="section-live" class="app-section active">
-            <h2><i class="fa-solid fa-video"></i> Module de Vente Directe</h2>
-            <div class="video-box" id="live-video-box">
-                <span id="badge-live-status" class="badge-live">REC LIVE</span>
-                <span id="video-placeholder">[ Caméra prête pour la diffusion ]</span>
-                <video id="webcam" autoplay playsinline style="width:100%; height:100%; object-fit:cover; display:none; border-radius:10px;"></video>
+            <h2>Direct Live</h2>
+            <div class="video-box">
+                <span>[ Caméra prête pour la diffusion ]</span>
             </div>
-
-            <button class="btn-principal btn-enregistrement" id="btn-live-vocal" onclick="basculerLiveVocal()">
-                <i class="fa-solid fa-microphone"></i> Lancer le Live Vidéo & Micro Commerce
-            </button>
-
-            <div class="status-box">
-                Statut : <span id="statut-vocal" style="color:var(--rouge-action); font-weight:bold;">Micro inactif. Lancez le live pour écouter.</span>
-            </div>
-
-            <h3>📝 Traçabilité de l'Achat en Cours</h3>
-            <p id="affichage-analyse" style="font-size:14px; color:var(--texte-gris); font-style: italic; min-height:30px;">
-                *Cliquez sur le bouton rouge et dictez (ex: "Sac à main 10000 francs pour le 66000000")*
-            </p>
-
-            <div class="finances-box">
-                <p><span>Prix Client :</span> <span id="fin-prix" style="font-weight:bold;">0 FCFA</span></p>
-                <p><span>Commission Prélevée (5%) :</span> <span id="fin-comm" style="color:var(--rouge-action);">0 FCFA</span></p>
-                <p style="border-top:1px solid #333; padding-top:8px; margin-top:8px; font-size:16px;">
-                    <strong>Reste pour le Vendeur :</strong> <strong id="fin-net" style="color:var(--vert-whatsapp);">0 FCFA</strong>
-                </p>
-            </div>
-
-            <button class="btn-principal" style="margin-top:15px;" onclick="genererFactureWhatsApp()">
-                <i class="fa-brands fa-whatsapp"></i> Envoyer la Facture sur WhatsApp
+            <button class="btn-principal" style="background-color:var(--rouge-action); color:white;">
+                <i class="fa-solid fa-microphone"></i> Activer Micro Commerce
             </button>
         </div>
 
         <div id="section-vitrine" class="app-section">
-            <h2><i class="fa-solid fa-store"></i> Enregistrer une Marchandise</h2>
-            <p style="color:var(--texte-gris); font-size:12px; margin-top:-10px; margin-bottom:15px;">Prenez une photo en direct ou importez-la pour l'ajouter à la vitrine mondiale.</p>
-
+            <h2>Enregistrer une Marchandise</h2>
             <div class="form-group">
-                <label for="img-input" class="custom-file-upload">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> <span id="file-label">Choisir ou Prendre une photo</span>
-                </label>
-                <input type="file" id="img-input" accept="image/*" onchange="mettreAJourNomFichier()">
+                <input type="text" id="p-nom" placeholder="Nom de l'article">
             </div>
-
             <div class="form-group">
-                <input type="text" id="p-nom" placeholder="Ex: Sac en cuir VIP, Chaussures, etc.">
+                <input type="number" id="p-prix" placeholder="Prix en FCFA">
             </div>
+            <button class="btn-principal" onclick="sauvegarderArticle()">Enregistrer</button>
 
-            <div class="form-group">
-                <input type="number" id="p-prix" placeholder="Prix de vente en FCFA">
-            </div>
-
-            <button class="btn-principal" onclick="sauvegarderArticle()">Enregistrer l'article</button>
-
-            <h3 style="margin-top:25px; color:#ffb703;"><i class="fa-solid fa-boxes-stacked"></i> Articles Disponibles</h3>
-            <div class="grid-vitrine" id="vitrine-container">
-                </div>
+            <div class="grid-vitrine" id="vitrine-container"></div>
         </div>
 
         <div id="section-clients" class="app-section">
-            <h2><i class="fa-solid fa-users"></i> Suivi Relation Client</h2>
-            <p style="color:var(--texte-gris); font-size:14px;">Espace de stockage de la clientèle et configuration du répondeur automatique IA.</p>
-            <div class="status-box" style="border-left-color:#ffb703;">
-                <i class="fa-solid fa-circle-info"></i> Base de données synchronisée localement.
-            </div>
+            <h2>Suivi Clients</h2>
+            <p>Base de données locale active.</p>
         </div>
     </div>
 
     <script>
-        // --- CONFIGURATION GENERALE ---
-        const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dvoya2e3o/image/upload";
-        const UPLOAD_PRESET = "ml_default"; 
-        
-        let reconnaissanceVocale;
-        let microActif = false;
-        let fluxVideo = null;
         let catalogueArticles = JSON.parse(localStorage.getItem('vendstoc_articles')) || [];
 
-        // --- NAVIGATION ENTRE ONGLETS ---
         function changerOnglet(cible) {
             document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             
-            document.getElementById(`section-${cible}`).classList.add('active');
-            if(window.event && window.event.currentTarget) {
-                window.event.currentTarget.classList.add('active');
-            }
+            const sec = document.getElementById(`section-${cible}`);
+            const btn = document.getElementById(`btn-tab-${cible}`);
+            
+            if(sec) sec.classList.add('active');
+            if(btn) btn.add('active');
 
             if(cible === 'vitrine') {
                 afficherCatalogue();
             }
         }
 
-        function mettreAJourNomFichier() {
-            const input = document.getElementById('img-input');
-            const label = document.getElementById('file-label');
-            if(input.files && input.files[0]) {
-                label.innerText = input.files[0].name;
-            }
-        }
+        function sauvegarderArticle() {
+            const nom = document.getElementById('p-nom').value.trim();
+            const prix = document.getElementById('p-prix').value.trim();
 
-        // --- GESTION DU CATALOGUE ET UPLOAD CLOUDINARY ---
-        async function sauvegarderArticle() {
-            const nomInput = document.getElementById('p-nom');
-            const prixInput = document.getElementById('p-prix');
-            const fileInput = document.getElementById('img-input');
-
-            const nom = nomInput.value.trim();
-            const prix = prixInput.value.trim();
-
-            if (!nom || !prix) {
-                alert("Veuillez assigner un nom et un prix à la marchandise.");
+            if(!nom || !prix) {
+                alert("Remplissez les champs");
                 return;
             }
 
-            let urlImageFinale = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400"; 
-            
-            const container = document.getElementById('vitrine-container');
-            const tempId = "temp-" + Date.now();
-            const carteTemp = document.createElement('div');
-            carteTemp.className = "product-card";
-            carteTemp.id = tempId;
-            carteTemp.innerHTML = `
-                <div class="loader-image"><i class="fa-solid fa-spinner fa-spin fa-2x"></i></div>
-                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect width='100%' height='100%' fill='%23222'/></svg>" style="opacity:0.3;">
-                <h4 style="margin:5px 0; font-size:15px; color:var(--texte-gris);">${nom}</h4>
-                <p style="color:var(--vert-whatsapp); font-weight:bold; margin:5px 0;">${parseInt(prix).toLocaleString()} FCFA</p>
-            `;
-            container.appendChild(carteTemp);
-
-            if (fileInput.files && fileInput.files[0]) {
-                const fichier = fileInput.files[0];
-                const formData = new FormData();
-                formData.append('file', fichier);
-                formData.append('upload_preset', UPLOAD_PRESET);
-
-                try {
-                    const reponse = await fetch(CLOUDINARY_URL, {
-                        method: 'POST',
-                        body: formData
-                    });
-                    const resultatsCloud = await reponse.json();
-                    
-                    if (resultatsCloud.secure_url) {
-                        urlImageFinale = resultatsCloud.secure_url;
-                    } else {
-                        urlImageFinale = URL.createObjectURL(fichier);
-                    }
-                } catch (err) {
-                    console.error("Erreur Cloudinary, bascule locale.", err);
-                    urlImageFinale = URL.createObjectURL(fichier);
-                }
-            }
-
-            const elementTemp = document.getElementById(tempId);
-            if(elementTemp) elementTemp.remove();
-
-            const nouvelArticle = {
+            const art = {
                 id: Date.now(),
                 nom: nom,
                 prix: parseInt(prix),
-                image: urlImageFinale
+                image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400"
             };
 
-            catalogueArticles.push(nouvelArticle);
+            catalogueArticles.push(art);
             localStorage.setItem('vendstoc_articles', JSON.stringify(catalogueArticles));
-
-            nomInput.value = "";
-            prixInput.value = "";
-            fileInput.value = "";
-            document.getElementById('file-label').innerText = "Choisir ou Prendre une photo";
-
+            
+            document.getElementById('p-nom').value = "";
+            document.getElementById('p-prix').value = "";
             afficherCatalogue();
         }
 
         function afficherCatalogue() {
-            const container = document.getElementById('vitrine-container');
-            container.innerHTML = "";
-
+            const c = document.getElementById('vitrine-container');
+            if(!c) return;
+            c.innerHTML = "";
+            
             if(catalogueArticles.length === 0) {
-                container.innerHTML = `<p style="grid-column: span 2; color:var(--texte-gris); font-size:13px; padding:10px;">Aucun article dans la vitrine.</p>`;
+                c.innerHTML = "<p>Aucun article.</p>";
                 return;
             }
 
-            catalogueArticles.forEach(art => {
-                const carte = document.createElement('div');
-                carte.className = "product-card";
-                carte.innerHTML = `
-                    <img src="${art.image}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400';">
-                    <h4 style="margin:8px 0 4px 0; font-size:15px; text-transform:capitalize;">${art.nom}</h4>
-                    <p style="color:var(--vert-whatsapp); font-weight:bold; margin:0 0 5px 0;">${art.prix.toLocaleString()} FCFA</p>
+            catalogueArticles.forEach(a => {
+                c.innerHTML += `
+                    <div class="product-card">
+                        <img src="${a.image}">
+                        <h4>${a.nom}</h4>
+                        <p style="color:var(--vert-whatsapp); font-weight:bold;">${a.prix} FCFA</p>
+                    </div>
                 `;
-                container.appendChild(carte);
             });
         }
 
-        // --- ENGINE RECONNAISSANCE VOCALE & STREAMING LIVE ---
-        async function basculerLiveVocal() {
-            const bouton = document.getElementById('btn-live-vocal');
-            const statutTxt = document.getElementById('statut-vocal');
-            const videoElement = document.getElementById('webcam');
-            const placeholder = document.getElementById('video-placeholder');
-            const badgeLive = document.getElementById('badge-live-status');
-
-            if (!microActif) {
-                try {
-                    fluxVideo = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
-                    videoElement.srcObject = fluxVideo;
-                    videoElement.style.display = "block";
-                    placeholder.style.display = "none";
-                    badgeLive.style.display = "block";
-                } catch(e) {
-                    console.log("Caméra indisponible ou refusée.");
-                }
-
-                const SpeechConstructor = window.SpeechRecognition || window.webkitSpeechRecognition;
-                if (!SpeechConstructor) {
-                    alert("La reconnaissance vocale n'est pas supportée sur ce navigateur mobile (Privilégiez Google Chrome).");
-                    return;
-                }
-
-                reconnaissanceVocale = new SpeechConstructor();
-                reconnaissanceVocale.lang = 'fr-FR';
-                reconnaissanceVocale.continuous = true;
-                reconnaissanceVocale.interimResults = false;
-
-                reconnaissanceVocale.onresult = function(event) {
-                    const texteCompris = event.results[event.results.length - 1][0].transcript;
-                    document.getElementById('affichage-analyse').innerText = `"${texteCompris}"`;
-                    analyserTexteVente(texteCompris);
-                };
-
-                reconnaissanceVocale.onerror = function(err) {
-                    console.error("Erreur de capture micro: ", err.error);
-                };
-
-                reconnaissanceVocale.start();
-                microActif = true;
-                bouton.innerHTML = `<i class="fa-solid fa-video-slash"></i> Couper le Live & Micro Commerce`;
-                bouton.style.backgroundColor = "var(--rouge-action)";
-                statutTxt.innerText = "Écoute en cours... Parlez naturellement.";
-                statutTxt.style.color = "var(--vert-whatsapp)";
-            } else {
-                if(reconnaissanceVocale) reconnaissanceVocale.stop();
-                if(fluxVideo) {
-                    fluxVideo.getTracks().forEach(track => track.stop());
-                }
-                videoElement.style.display = "none";
-                placeholder.style.display = "block";
-                badgeLive.style.display = "none";
-                
-                microActif = false;
-                bouton.innerHTML = `<i class="fa-solid fa-microphone"></i> Lancer le Live Vidéo & Micro Commerce`;
-                bouton.style.backgroundCol
+        window.onload = function() {
+            afficherCatalogue();
+        };
+    </script>
+</body>
+</html>
