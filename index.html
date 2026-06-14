@@ -3,13 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vendstoc App</title>
+    <title>Vendstoc App - Global Market & Affiliation</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
             --bg-principal: #121214;
             --bg-carte: #1e1e24;
             --vert-whatsapp: #25D366;
+            --bleu-partage: #0077b6;
+            --orange-crypto: #f7931a;
+            --violet-affiliation: #9b5de5;
             --rouge-action: #e63946;
             --texte-blanc: #ffffff;
             --texte-gris: #a0a0b0;
@@ -42,12 +46,6 @@
             font-size: 28px;
         }
 
-        .header p {
-            color: var(--texte-gris);
-            font-size: 13px;
-        }
-
-        /* Onglets */
         .navigation-tabs {
             display: flex;
             justify-content: space-between;
@@ -78,7 +76,6 @@
             color: var(--bg-principal);
         }
 
-        /* Sections */
         .app-section {
             display: none;
             background-color: var(--bg-carte);
@@ -91,19 +88,11 @@
             display: block;
         }
 
-        /* Formulaires */
         .form-group {
             margin-bottom: 15px;
         }
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: var(--texte-gris);
-            font-size: 13px;
-        }
-
-        input[type="text"], input[type="number"] {
+        input[type="text"], input[type="number"], .search-bar {
             width: 100%;
             padding: 12px;
             border-radius: 8px;
@@ -114,12 +103,22 @@
             font-size: 15px;
         }
 
-        /* Cache l'input moche par défaut */
+        /* Style spécifique barre de recherche */
+        .search-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        .search-container i {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            color: var(--texte-gris);
+        }
+
         input[type="file"] {
             display: none;
         }
 
-        /* Style du bouton de téléchargement photo */
         .custom-file-upload {
             display: flex;
             align-items: center;
@@ -129,7 +128,6 @@
             padding: 15px;
             border-radius: 8px;
             cursor: pointer;
-            text-align: center;
             color: var(--texte-gris);
             background-color: var(--bg-principal);
             font-weight: bold;
@@ -147,47 +145,74 @@
             cursor: pointer;
         }
 
-        /* Vitrine */
         .grid-vitrine {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 15px;
             margin-top: 15px;
         }
 
         .product-card {
             background-color: var(--bg-principal);
-            border-radius: 10px;
-            padding: 10px;
-            text-align: center;
+            border-radius: 12px;
+            padding: 15px;
             border: 1px solid #222;
-            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .product-card img {
             width: 100%;
-            height: 120px;
+            height: 200px;
             object-fit: cover;
             border-radius: 8px;
         }
 
-        .video-box {
-            width: 100%;
-            height: 220px;
-            background-color: #000;
-            border-radius: 10px;
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .btn-action {
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--texte-gris);
-            margin-bottom: 15px;
+            gap: 5px;
+            color: white;
         }
 
-        .loader-image {
-            position: absolute;
-            top: 35%;
-            left: 42%;
-            color: var(--vert-whatsapp);
+        .btn-wa { background-color: var(--vert-whatsapp); color: #121214; }
+        .btn-momo { background-color: #833ab4; }
+        .btn-crypto { background-color: var(--orange-crypto); }
+        .btn-aff { background-color: var(--violet-affiliation); grid-column: span 2; }
+        .btn-sh { background-color: var(--bleu-partage); grid-column: span 2; }
+
+        .qr-container {
+            display: flex;
+            justify-content: center;
+            background: white;
+            padding: 5px;
+            border-radius: 8px;
+            width: 80px;
+            height: 80px;
+            margin: 5px auto;
+        }
+
+        .badge-commission {
+            background-color: var(--violet-affiliation);
+            color: white;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -195,193 +220,258 @@
 
     <div class="container">
         <div class="header">
-            <h1>VENDSTOC APP 🚀</h1>
-            <p>Live Vidéo • Saisie Vocale • Facture Signée</p>
+            <h1>VENDSTOC GLOBAL 🌍</h1>
+            <p>Vitrine Connectée, Recherche & Affiliation</p>
         </div>
 
         <div class="navigation-tabs">
-            <button id="btn-tab-live" class="tab-btn active" onclick="changerOnglet('live')"><i class="fa-solid fa-tv"></i> Direct Live</button>
-            <button id="btn-tab-vitrine" class="tab-btn" onclick="changerOnglet('vitrine')"><i class="fa-solid fa-bag-shopping"></i> Vitrine</button>
-            <button id="btn-tab-clients" class="tab-btn" onclick="changerOnglet('clients')"><i class="fa-solid fa-phone"></i> Clients</button>
+            <button id="btn-tab-vitrine" class="tab-btn active" onclick="changerOnglet('vitrine')"><i class="fa-solid fa-bag-shopping"></i> Vitrine</button>
+            <button id="btn-tab-ajouter" class="tab-btn" onclick="changerOnglet('ajouter')"><i class="fa-solid fa-plus"></i> Publier</button>
         </div>
 
-        <div id="section-live" class="app-section active">
-            <h2>Direct Live</h2>
-            <div class="video-box">
-                <span>[ Caméra prête pour la diffusion ]</span>
+        <!-- SECTION 1 : VITRINE MONDIALE AVEC BARRE DE RECHERCHE -->
+        <div id="section-vitrine" class="app-section active">
+            
+            <!-- Barre de Recherche Dynamique -->
+            <div class="search-container">
+                <input type="text" id="barre-recherche" class="search-bar" placeholder="🔍 Rechercher un article (ex: Nike, Sac...)" oninput="filtrerArticles()">
             </div>
-            <button class="btn-principal" style="background-color:var(--rouge-action); color:white;">
-                <i class="fa-solid fa-microphone"></i> Activer Micro Commerce
-            </button>
+
+            <h2><i class="fa-solid fa-earth-africa" style="color:var(--vert-whatsapp)"></i> Articles en Temps Réel</h2>
+            <div class="grid-vitrine" id="vitrine-container"></div>
         </div>
 
-        <div id="section-vitrine" class="app-section">
-            <h2>Enregistrer une Marchandise</h2>
+        <!-- SECTION 2 : FORMULAIRE -->
+        <div id="section-ajouter" class="app-section">
+            <h2><i class="fa-solid fa-cart-plus"></i> Infos Marchandise & Vendeur</h2>
             
             <div class="form-group">
                 <label for="img-input" class="custom-file-upload">
                     <i class="fa-solid fa-camera fa-lg" style="color: var(--vert-whatsapp);"></i> 
-                    <span id="file-label">Ajouter ou Prendre une Photo</span>
+                    <span id="file-label">Prendre la photo du produit</span>
                 </label>
                 <input type="file" id="img-input" accept="image/*" onchange="mettreAJourNomFichier()">
             </div>
 
             <div class="form-group">
-                <input type="text" id="p-nom" placeholder="Nom de l'article (ex: Chaussures)">
+                <input type="text" id="p-nom" placeholder="Nom de l'article">
             </div>
 
             <div class="form-group">
-                <input type="number" id="p-prix" placeholder="Prix en FCFA">
+                <input type="number" id="p-prix" placeholder="Prix de vente (FCFA)">
             </div>
 
-            <button class="btn-principal" onclick="sauvegarderArticle()">Enregistrer l'article</button>
+            <div class="form-group">
+                <input type="number" id="p-commission" placeholder="Commission Affiliation en % (Ex: 10)" value="10">
+            </div>
 
-            <h3 style="margin-top:20px; color: #ffb703;"><i class="fa-solid fa-boxes-stacked"></i> Articles Disponibles</h3>
-            <div class="grid-vitrine" id="vitrine-container"></div>
-        </div>
+            <h3 style="color:var(--vert-whatsapp); border-top: 1px solid #333; padding-top:15px;"> Coordonnées de Paiement</h3>
 
-        <div id="section-clients" class="app-section">
-            <h2>Suivi Clients</h2>
-            <p>Base de données locale active.</p>
+            <div class="form-group">
+                <input type="text" id="p-whatsapp" placeholder="N° WhatsApp Vendeur (ex: 23566000000)">
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="p-crypto" placeholder="Adresse Portefeuille Crypto">
+            </div>
+
+            <button class="btn-principal" onclick="publierSurLeMonde()"><i class="fa-solid fa-paper-plane"></i> Mettre en ligne & Publier</button>
         </div>
     </div>
 
     <script>
-        // Ta configuration Cloudinary vérifiée
+        const SUPABASE_URL = "https://ekmlcvyrjlenujvlixik.supabase.co";
+        const SUPABASE_KEY = "EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVrbWxjdnlyamxlbnVqdmxpeGlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDUzODUsImV4cCI6MjA5NzAyMTM4NX0.Y1f8Ogp-RfE_wvJi4GCz8BdwMsjZ3YM8tggHveByNQw";
+
         const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dvoya2e3o/image/upload";
         const UPLOAD_PRESET = "ml_default"; 
 
-        let catalogueArticles = JSON.parse(localStorage.getItem('vendstoc_articles')) || [];
+        let tousLesArticles = []; // Stockage local des articles pour la recherche rapide
 
-        // Gestion stable du changement d'onglets
         function changerOnglet(cible) {
             document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             
-            const sec = document.getElementById(`section-${cible}`);
-            const btn = document.getElementById(`btn-tab-${cible}`);
-            
-            if(sec) sec.classList.add('active');
-            if(btn) btn.classList.add('active');
+            document.getElementById(`section-${cible}`).classList.add('active');
+            document.getElementById(`btn-tab-${cible}`).classList.add('active');
 
-            if(cible === 'vitrine') {
-                afficherCatalogue();
-            }
+            if(cible === 'vitrine') { chargerArticlesMondiaux(); }
         }
 
-        // Met à jour le texte du bouton quand une photo est sélectionnée
         function mettreAJourNomFichier() {
             const input = document.getElementById('img-input');
             const label = document.getElementById('file-label');
-            if(input.files && input.files[0]) {
-                label.innerText = "📸 " + input.files[0].name;
-                label.style.borderColor = "var(--vert-whatsapp)";
-            }
+            if(input.files && input.files[0]) { label.innerText = "📸 " + input.files[0].name; }
         }
 
-        // Sauvegarde et envoi vers Cloudinary
-        async function sauvegarderArticle() {
-            const nomInput = document.getElementById('p-nom');
-            const prixInput = document.getElementById('p-prix');
+        // --- FILTRE DYNAMIQUE (BARRE DE RECHERCHE) ---
+        function filtrerArticles() {
+            const recherche = document.getElementById('barre-recherche').value.toLowerCase().trim();
+            const articlesFiltres = tousLesArticles.filter(art => art.nom.toLowerCase().includes(recherche));
+            afficherVitrine(articlesFiltres);
+        }
+
+        // --- PUBLICATION ---
+        async function publierSurLeMonde() {
+            const nom = document.getElementById('p-nom').value.trim();
+            const prix = document.getElementById('p-prix').value.trim();
+            const commission = document.getElementById('p-commission').value.trim();
+            const whatsapp = document.getElementById('p-whatsapp').value.trim();
+            const crypto = document.getElementById('p-crypto').value.trim();
             const fileInput = document.getElementById('img-input');
 
-            const nom = nomInput.value.trim();
-            const prix = prixInput.value.trim();
-
-            if (!nom || !prix) {
-                alert("Veuillez remplir le nom et le prix.");
+            if (!nom || !prix || !whatsapp) {
+                alert("Veuillez remplir au moins le nom, le prix et votre numéro WhatsApp.");
                 return;
             }
 
-            // Image de secours par défaut si aucune photo n'est prise
-            let urlImageFinale = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400"; 
-            
-            // Affiche un aperçu de chargement (Loader) pendant l'envoi
-            const container = document.getElementById('vitrine-container');
-            const tempId = "temp-" + Date.now();
-            const carteTemp = document.createElement('div');
-            carteTemp.className = "product-card";
-            carteTemp.id = tempId;
-            carteTemp.innerHTML = `
-                <div class="loader-image"><i class="fa-solid fa-spinner fa-spin fa-2x"></i></div>
-                <div style="width:100%; height:120px; background:#222; border-radius:8px;"></div>
-                <h4>${nom}</h4>
-                <p style="color:var(--vert-whatsapp); font-weight:bold;">Envoi en cours...</p>
-            `;
-            container.appendChild(carteTemp);
+            let urlImage = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400";
 
-            // Si l'utilisateur a sélectionné une photo
             if (fileInput.files && fileInput.files[0]) {
-                const fichier = fileInput.files[0];
                 const formData = new FormData();
-                formData.append('file', fichier);
+                formData.append('file', fileInput.files[0]);
                 formData.append('upload_preset', UPLOAD_PRESET);
 
                 try {
-                    const reponse = await fetch(CLOUDINARY_URL, {
-                        method: 'POST',
-                        body: formData
-                    });
-                    const resultatsCloud = await reponse.json();
-                    
-                    if (resultatsCloud.secure_url) {
-                        urlImageFinale = resultatsCloud.secure_url;
-                    }
-                } catch (err) {
-                    console.error("Erreur Cloudinary : ", err);
-                }
+                    const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
+                    const data = await res.json();
+                    if(data.secure_url) urlImage = data.secure_url;
+                } catch (e) { console.error("Erreur image Cloudinary"); }
             }
 
-            // Supprime l'aperçu temporaire
-            const elementTemp = document.getElementById(tempId);
-            if(elementTemp) elementTemp.remove();
-
-            // Ajoute le produit au catalogue
-            const nouvelArticle = {
-                id: Date.now(),
-                nom: nom,
-                prix: parseInt(prix),
-                image: urlImageFinale
+            const donnesArticle = { 
+                nom, 
+                prix: parseInt(prix), 
+                image: urlImage, 
+                whatsapp, 
+                crypto_wallet: crypto,
+                commission_pct: parseInt(commission) || 10
             };
 
-            catalogueArticles.push(nouvelArticle);
-            localStorage.setItem('vendstoc_articles', JSON.stringify(catalogueArticles));
+            try {
+                await fetch(`${SUPABASE_URL}/rest/v1/articles`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(donnesArticle)
+                });
 
-            // Réinitialise le formulaire
-            nomInput.value = "";
-            prixInput.value = "";
-            fileInput.value = "";
-            document.getElementById('file-label').innerText = "Ajouter ou Prendre une Photo";
+                alert("🚀 Marchandise publiée avec succès !");
+                document.getElementById('p-nom').value = "";
+                document.getElementById('p-prix').value = "";
+                document.getElementById('p-whatsapp').value = "";
+                document.getElementById('p-crypto').value = "";
+                fileInput.value = "";
+                changerOnglet('vitrine');
 
-            afficherCatalogue();
+            } catch (error) { alert("Erreur lors de la publication."); }
         }
 
-        // Affiche proprement les cartes d'articles
-        function afficherCatalogue() {
+        // --- CHARGEMENT DEPUIS SUPABASE ---
+        async function chargerArticlesMondiaux() {
             const container = document.getElementById('vitrine-container');
-            if(!container) return;
+            container.innerHTML = "<p>Connexion au marché mondial...</p>";
+
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/articles?order=created_at.desc`, {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+                });
+                tousLesArticles = await res.json();
+                filtrerArticles(); // Affiche et applique si du texte est déjà saisi
+            } catch (e) { container.innerHTML = "<p>Erreur de synchronisation.</p>"; }
+        }
+
+        // --- RENDU GRAPHIQUE DES CARTES ---
+        function afficherVitrine(liste) {
+            const container = document.getElementById('vitrine-container');
             container.innerHTML = "";
 
-            if(catalogueArticles.length === 0) {
-                container.innerHTML = `<p style="grid-column: span 2; color:var(--texte-gris); font-size:13px;">Aucun article disponible.</p>`;
+            if(liste.length === 0) {
+                container.innerHTML = "<p>Aucun article ne correspond à votre recherche.</p>";
                 return;
             }
 
-            catalogueArticles.forEach(art => {
+            // Détection si le client arrive via un lien d'affilié (?ref=...)
+            const urlParams = new URLSearchParams(window.location.search);
+            const parentAffilie = urlParams.get('ref') || "";
+
+            liste.forEach((art) => {
                 const carte = document.createElement('div');
                 carte.className = "product-card";
+                
+                // Calcul de la valeur de commission en FCFA
+                const valeurCommission = (art.prix * (art.commission_pct || 10)) / 100;
+
+                // Construction des liens
+                let texteWA = `Bonjour, je souhaite commander l'article *${art.nom}* au prix de ${art.prix} FCFA.`;
+                if(parentAffilie) {
+                    texteWA += `\n\n_(Commande passée via l'affilié ID: ${parentAffilie})_`;
+                }
+                const lienWA = `https://api.whatsapp.com/send?phone=${art.whatsapp}&text=${encodeURIComponent(texteWA)}`;
+                const lienMomo = `https://www.monetbil.com/pay/v2.1/votre_identifiant_monetbil?amount=${art.prix}`; 
+
                 carte.innerHTML = `
-                    <img src="${art.image}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400';">
-                    <h4 style="margin:8px 0 4px 0; font-size:15px;">${art.nom}</h4>
-                    <p style="color:var(--vert-whatsapp); font-weight:bold; margin:0;">${art.prix.toLocaleString()} FCFA</p>
+                    <img src="${art.image}">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3 style="margin:0; text-transform:capitalize;">${art.nom}</h3>
+                        <span style="color:var(--vert-whatsapp); font-weight:bold; font-size:18px;">${art.prix.toLocaleString()} FCFA</span>
+                    </div>
+                    
+                    <div style="display:flex; justify-content: space-between; align-items:center; margin-top:5px;">
+                        <span class="badge-commission"><i class="fa-solid fa-money-bill-trend-up"></i> Affiliation : ${art.commission_pct}% (${valeurCommission} FCFA)</span>
+                    </div>
+
+                    <div style="text-align:center; font-size:11px; color:var(--texte-gris); margin-top:10px;">Scan pour voir la fiche produit :</div>
+                    <div class="qr-container" id="qr-${art.id}"></div>
+
+                    <div class="action-buttons">
+                        <button class="btn-action btn-wa" onclick="window.open('${lienWA}', '_blank')"><i class="fa-brands fa-whatsapp"></i> Commander</button>
+                        <button class="btn-action btn-momo" onclick="window.open('${lienMomo}', '_blank')"><i class="fa-solid fa-mobile-screen"></i> Mobile Money</button>
+                        ${art.crypto_wallet ? `<button class="btn-action btn-crypto" onclick="navigator.clipboard.writeText('${art.crypto_wallet}'); alert('Adresse Crypto copiée !')"><i class="fa-brands fa-ethereum"></i> Pay Crypto</button>` : ''}
+                        
+                        <!-- BOUTON D'AFFILIATION SUPRÊME -->
+                        <button class="btn-action btn-aff" onclick="genererLienAffiliation(${art.id}, '${art.nom}')">
+                            <i class="fa-solid fa-link"></i> Devenir Affilié (Gagner ${valeurCommission} FCFA)
+                        </button>
+
+                        <button class="btn-action btn-sh" onclick="partagerLienGlobal('${art.nom}', ${art.prix})"><i class="fa-solid fa-share-nodes"></i> Partager</button>
+                    </div>
                 `;
                 container.appendChild(carte);
+
+                new QRCode(document.getElementById(`qr-${art.id}`), {
+                    text: window.location.href,
+                    width: 80,
+                    height: 80
+                });
             });
         }
 
-        window.onload = function() {
-            afficherCatalogue();
-        };
+        // --- SYSTEME D'AFFILIATION DYNAMIQUE ---
+        function genererLienAffiliation(idArticle, nomArticle) {
+            const nomAffilie = prompt("Entrez votre Prénom + Numéro WhatsApp pour créer votre lien d'affilié (Ex: Moussa23566...) :");
+            if(!nomAffilie) return;
+
+            // Construit l'adresse URL d'affiliation unique
+            const cleanRef = nomAffilie.replace(/[^a-zA-Z0-9]/g, "");
+            const lienAffiliationUnique = `${window.location.origin}${window.location.pathname}?product=${idArticle}&ref=${cleanRef}`;
+
+            // Copie automatique dans le presse-papier de l'affilié
+            navigator.clipboard.writeText(lienAffiliationUnique);
+
+            alert(`🎉 Félicitations ! Votre lien d'affilié pour "${nomArticle}" a été généré et copié !\n\nPartagez-le partout. Si quelqu'un achète via ce lien, le vendeur saura que c'est grâce à vous (${cleanRef}).\n\nLien : ${lienAffiliationUnique}`);
+        }
+
+        function partagerLienGlobal(nom, prix) {
+            const txt = `🔥 *PRODUIT DISPONIBLE SUR VENDSTOC* 🔥\n\n📦 *Article :* ${nom.toUpperCase()}\n💰 *Prix :* ${prix.toLocaleString()} FCFA\n\nDécouvrez-le ici : ${window.location.href}`;
+            if(navigator.share) { navigator.share({ title: nom, text: txt }); } 
+            else { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`, '_blank'); }
+        }
+
+        window.onload = function() { chargerArticlesMondiaux(); };
     </script>
 </body>
-</html>
+                </html>
