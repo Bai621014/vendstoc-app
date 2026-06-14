@@ -257,7 +257,7 @@
             color: var(--vert-whatsapp);
             z-index: 10;
         }
-    </script>
+    </style>
 </head>
 <body>
 
@@ -358,8 +358,8 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             
             document.getElementById(`section-${cible}`).classList.add('active');
-            if(event && event.currentTarget) {
-                event.currentTarget.classList.add('active');
+            if(window.event && window.event.currentTarget) {
+                window.event.currentTarget.classList.add('active');
             }
 
             if(cible === 'vitrine') {
@@ -389,10 +389,8 @@
                 return;
             }
 
-            // Image de secours par défaut
             let urlImageFinale = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400"; 
             
-            // Étape 1 : Créer la carte de chargement visuel
             const container = document.getElementById('vitrine-container');
             const tempId = "temp-" + Date.now();
             const carteTemp = document.createElement('div');
@@ -406,7 +404,6 @@
             `;
             container.appendChild(carteTemp);
 
-            // Étape 2 : Envoi vers Cloudinary
             if (fileInput.files && fileInput.files[0]) {
                 const fichier = fileInput.files[0];
                 const formData = new FormData();
@@ -431,11 +428,9 @@
                 }
             }
 
-            // Nettoyage de la carte temporaire
             const elementTemp = document.getElementById(tempId);
             if(elementTemp) elementTemp.remove();
 
-            // Étape 3 : Sauvegarde définitive des données
             const nouvelArticle = {
                 id: Date.now(),
                 nom: nom,
@@ -446,7 +441,6 @@
             catalogueArticles.push(nouvelArticle);
             localStorage.setItem('vendstoc_articles', JSON.stringify(catalogueArticles));
 
-            // Reset des champs
             nomInput.value = "";
             prixInput.value = "";
             fileInput.value = "";
@@ -476,7 +470,7 @@
             });
         }
 
-        // --- ENGINE RECONNAISSANCE VOCALE & STREAMING LIVE REPARE ---
+        // --- ENGINE RECONNAISSANCE VOCALE & STREAMING LIVE ---
         async function basculerLiveVocal() {
             const bouton = document.getElementById('btn-live-vocal');
             const statutTxt = document.getElementById('statut-vocal');
@@ -485,7 +479,6 @@
             const badgeLive = document.getElementById('badge-live-status');
 
             if (!microActif) {
-                // Allumer le flux vidéo caméra
                 try {
                     fluxVideo = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
                     videoElement.srcObject = fluxVideo;
@@ -496,7 +489,6 @@
                     console.log("Caméra indisponible ou refusée.");
                 }
 
-                // Lancement du moteur vocal
                 const SpeechConstructor = window.SpeechRecognition || window.webkitSpeechRecognition;
                 if (!SpeechConstructor) {
                     alert("La reconnaissance vocale n'est pas supportée sur ce navigateur mobile (Privilégiez Google Chrome).");
@@ -525,7 +517,14 @@
                 statutTxt.innerText = "Écoute en cours... Parlez naturellement.";
                 statutTxt.style.color = "var(--vert-whatsapp)";
             } else {
-                // Éteindre les périphériques
                 if(reconnaissanceVocale) reconnaissanceVocale.stop();
                 if(fluxVideo) {
-                    fluxVideo.getTracks().
+                    fluxVideo.getTracks().forEach(track => track.stop());
+                }
+                videoElement.style.display = "none";
+                placeholder.style.display = "block";
+                badgeLive.style.display = "none";
+                
+                microActif = false;
+                bouton.innerHTML = `<i class="fa-solid fa-microphone"></i> Lancer le Live Vidéo & Micro Commerce`;
+                bouton.style.backgroundCol
