@@ -159,11 +159,16 @@
     </div>
 
     <script>
+        // CONFIGURATION CENTRALISÉE DE VOS INFRASTRUCTURES
         const SUPABASE_URL = "https://ekmlcvyrjlenujvlixik.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVrbWxjdnlyamxlbnVqdmxpeGlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDUzODUsImV4cCI6MjA5NzAyMTM4NX0.Y1f8Ogp-RfE_wvJi4GCz8BdwMsjZ3YM8tggHveByNQw";
         const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dvoya2e3o/image/upload";
         const UPLOAD_PRESET = "ml_default";
         
+        // PASSERELLE VERS VOTRE GROS SERVEUR GLOIREHUB (À changer après le déploiement de votre serveur)
+        const GLOIREHUB_API_URL = "https://api.gloirehub.com/v1"; 
+        const GLOIREHUB_API_KEY = "GH_SEC_TOKEN_PROD_XYZ123";
+
         const CONTRACT_ADDRESS = "0xVOTRE_ADRESSE_DE_CONTRAT_DEPLOYE";
         const CONTRACT_ABI = [
             "function payerArticle(address payable _vendeur, uint256 _commissionPct) public payable"
@@ -196,7 +201,6 @@
             afficherVitrine(tousLesArticles.filter(a => a.nom && a.nom.toLowerCase().includes(recherche))); 
         }
 
-        // AJUSTEMENT DYNAMIQUE SELON LE MOYEN DE TRANSFERT CHOISI
         function ajusterFormulaireTransfert() {
             const canal = document.getElementById('transfert-canal').value;
             const labelDest = document.getElementById('label-destinataire');
@@ -270,9 +274,8 @@
             window.open(`https://api.whatsapp.com/send?phone=${wa}&text=${encodeURIComponent(msg)}`, '_blank'); 
         }
 
-        // PAIEMENT AUTONOME (BLOCAGE AUTOMATIQUE A 4%)
         async function executerPaiementDirect(vendeurWallet, prixArticle) {
-            if (!vendeurWallet || vendedorWallet.trim() === "" || vendedorWallet === "undefined") {
+            if (!vendeurWallet || vendeurWallet.trim() === "" || vendeurWallet === "undefined") {
                 return alert("Le vendeur n'a pas configuré son portefeuille.");
             }
             if (typeof window.ethereum === 'undefined') {
@@ -296,7 +299,7 @@
             }
         }
 
-        // GESTION DU BOUTON DE TRANSFERT GENERAL
+        // LE BOUTON COMMUNIQUE EN DIRECT AVEC VOTRE SERVEUR CENTRAL GLOIREHUB
         async function executerTransfertGeneral() {
             const canal = document.getElementById('transfert-canal').value;
             const destinataire = document.getElementById('transfert-destinataire').value.trim();
@@ -321,12 +324,39 @@
                 } catch(err) { alert("Le transfert crypto a échoué."); }
                 
             } else {
-                // Routage hybride (Mobile money, Passerelles Web) via l'infrastructure de distribution
-                alert(`🚀 Ordre de transfert initié !\nMoyen choisi : ${canal.toUpperCase()}\nDestinataire : ${destinataire}\nMontant : ${montant}\n\nTraitement en cours via les passerelles de liquidités...`);
+                alert(`🚀 Ordre envoyé au serveur central GloireHub (${canal.toUpperCase()})...`);
                 
-                setTimeout(() => {
-                    alert(`💸 Transfert effectué avec succès ! Les fonds ont été déposés instantanément sur le compte ${canal.toUpperCase()} du bénéficiaire.`);
-                }, 2000);
+                try {
+                    const response = await fetch(`${GLOIREHUB_API_URL}/transfert`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${GLOIREHUB_API_KEY}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            canal: canal,
+                            destinataire: destinataire,
+                            montant: parseFloat(montant),
+                            app_source: "vendstoc-app"
+                        })
+                    });
+
+                    const resultat = await response.json();
+
+                    if (response.ok && resultat.success) {
+                        alert(`💸 Succès GloireHub : Transfert effectué ! ID Transaction: ${resultat.transaction_id}\n${resultat.message}`);
+                    } else {
+                        alert(`❌ Erreur renvoyée par GloireHub : ${resultat.message || "Échec du décaissement."}`);
+                    }
+                } catch (error) {
+                    console.error("Erreur de liaison API GloireHub:", error);
+                    alert("Impossible de joindre votre serveur GloireHub. Est-il bien en ligne ? En cours de simulation automatique...");
+                    
+                    // Mode de secours automatique si votre serveur n'est pas encore déployé
+                    setTimeout(() => {
+                        alert(`💸 [Simulé] Transfert de ${montant} effectué avec succès vers ${destinataire} (${canal.toUpperCase()}).`);
+                    }, 1500);
+                }
             }
         }
         
@@ -345,23 +375,4 @@
                 card.innerHTML = `
                     <img src="${srcImage}">
                     <h3>${article.nom || 'Sans titre'}</h3>
-                    <div style="font-size:20px; font-weight:bold; color:var(--v-wa);">${article.prix} CRYPTO</div>
-                    <div style="font-size:12px; color:var(--t-g);">Frais plateforme réduits : 4% (Inclus)</div>
-                    <div class="action-buttons">
-                        <button class="btn-action btn-wa" onclick="executerCommande('${article.nom}', '${article.prix}', '${article.whatsapp}')">Discuter (WA)</button>
-                        <button class="btn-action btn-crypto" onclick="executerPaiementDirect('${article.crypto_wallet}', ${article.prix})">
-                            <i class="fa-solid fa-wallet"></i> Payer directement (4% frais)
-                        </button>
-                    </div>
-                    <div class="qr-container" id="qr-${article.id}"></div>
-                `;
-                container.appendChild(card); 
-                const cleanUrl = window.location.href.split('?')[0] + `?product=${article.id}`;
-                new QRCode(document.getElementById(`qr-${article.id}`), { text: cleanUrl, width: 60, height: 60 });
-            });
-        }
-
-        window.onload = chargerArticlesMondiaux;
-    </script>
-</body>
-                    </html>
+                    <div style="font-size:20px; f
