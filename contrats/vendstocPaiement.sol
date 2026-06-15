@@ -6,7 +6,7 @@ pragma solidity ^0.8.20;
  * @dev Système de paiement autonome et instantané avec prélèvement automatique de commission.
  */
 contract VendstocPaiement {
-    address public admin;
+    address payable public admin;
 
     // Événement déclenché à chaque paiement réussi pour informer l'application mobile/web
     event PaymentShared(
@@ -19,13 +19,13 @@ contract VendstocPaiement {
 
     constructor() {
         // Le portefeuille qui déploie le contrat devient l'administrateur (reçoit les commissions)
-        admin = msg.sender;
+        admin = payable(msg.sender);
     }
 
     /**
      * @dev Gère le paiement d'un article et sépare automatiquement les fonds.
      * @param _vendeur L'adresse du portefeuille crypto du vendeur.
-     * @param _commissionPct Le pourcentage de commission prélevé par l'application (ex: 10).
+     * @param _commissionPct Le pourcentage de commission prélevé par l'application (ex: 4).
      */
     function payerArticle(address payable _vendeur, uint256 _commissionPct) public payable {
         require(msg.value > 0, "Le montant doit etre superieur a 0");
@@ -38,7 +38,7 @@ contract VendstocPaiement {
 
         // 2. Distribution automatique, sécurisée et instantanée
         if (montantCommission > 0) {
-            payable(admin).transfer(montantCommission); // Envoi des % à l'admin
+            admin.transfer(montantCommission); // Envoi des % à l'admin
         }
         _vendeur.transfer(montantVendeur); // Envoi du reste au vendeur
 
@@ -50,7 +50,7 @@ contract VendstocPaiement {
      * @dev Permet de modifier l'adresse de l'administrateur si vous changez de portefeuille principal.
      * @param _nouvelAdmin La nouvelle adresse qui encaissera les commissions.
      */
-    function changerAdmin(address _nouvelAdmin) public {
+    function changerAdmin(address payable _nouvelAdmin) public {
         require(msg.sender == admin, "Seul l'admin actuel peut effectuer cette action");
         require(_nouvelAdmin != address(0), "Nouvelle adresse invalide");
         admin = _nouvelAdmin;
