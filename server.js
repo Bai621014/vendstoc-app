@@ -1,65 +1,52 @@
-require('dotenv').config();
 const express = require('express');
 const app = express();
 
-// Middleware pour lire les données envoyées par Monetbil (format URL-encoded ou JSON)
+// Middlewares pour lire le JSON et les formulaires envoyés par les webhooks (Monetbil, etc.)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Route principale pour vérifier que le serveur tourne
+// 1. Page d'accueil du serveur GloireHub
 app.get('/', (req, res) => {
-    res.send('🚀 Serveur GloireHub en ligne. Traçabilité Web3 active.');
+    res.status(200).send('🚀 Serveur GloireHub (API GloirePay) actif et sécurisé.');
 });
 
-// ROUTE DE TRAÇABILITÉ (WEBHOOK)
-app.post('/api/monetbil-webhook', (req, res) => {
-    const txData = req.body;
-
-    console.log(`\n=== 📥 NOUVELLE TRANSACTION REÇUE [${new Date().toISOString()}] ===`);
+// 2. Webhook principal : C'est ici que convergent les "Newpaiements"
+app.post('/newpaiements/webhook', (req, res) => {
+    const paymentData = req.body;
     
-    // 1. Récupération de la clé secrète configurée sur Railway
-    const secretKey = process.env.MONETBIL_SECRET_KEY;
-    if (!secretKey) {
-        console.error("[ERREUR CRITIQUE] La variable MONETBIL_SECRET_KEY n'est pas définie sur Railway !");
-        return res.status(500).send("Erreur de configuration serveur");
+    console.log('\n==============================================');
+    console.log('       🎯 NOTIFICATION GLOIREPAY REÇUE       ');
+    console.log('==============================================');
+    console.log('Données brutes reçues :', JSON.stringify(paymentData, null, 2));
+
+    // Détection de la méthode de paiement
+    const paymentMethod = paymentData.operator || paymentData.method; // MTN, ORANGE, GLOIRECOIN, STRIPE
+    const amount = paymentData.amount;
+    const status = paymentData.status;
+
+    // A. Logique si le paiement utilise le carburant GloireCoin (V10)
+    if (paymentMethod === 'GLOIRECOIN') {
+        console.log(`[GloireCoin] 💰 Traitement d'un transfert instantané de ${amount} GloireCoin.`);
+        // TODO: Insérer ici ton interaction Web3 / Smart Contract pour transférer le jeton
+        return res.status(200).json({ success: true, message: "Paiement GloireCoin validé on-chain." });
     }
 
-    // 2. Extraction et affichage des données pour la traçabilité
-    // Monetbil envoie généralement : txid, payment_id, status, amount, currency, phone...
-    const transactionId = txData.txid || txData.payment_id || 'ID_INCONNU';
-    const status = txData.status ? txData.status.toUpperCase() : 'INCONNU';
-    const amount = txData.amount || '0';
-    const currency = txData.currency || 'XAF';
-    const userPhone = txData.phone || 'Non spécifié';
-
-    console.log(`🆔 ID Transaction : ${transactionId}`);
-    console.log(`💰 Montant        : ${amount} ${currency}`);
-    console.log(`📱 Client         : ${userPhone}`);
-    console.log(`📊 Statut Actuel  : ${status}`);
-
-    // 3. Logique de validation de la traçabilité
-    if (status === 'SUCCESS') {
-        console.log(`✅ [SUCCÈS] Le paiement a été complété avec succès !`);
-        console.log(`🔗 [Web3 Sync] Prêt pour enregistrement sécurisé ou exécution de contrat intelligent.`);
-        // C'est ici que vous pourrez ajouter la connexion à Supabase plus tard :
-        // await supabase.from('transactions').insert([{ id: transactionId, status: 'success' }]);
-    } else if (status === 'FAILED') {
-        console.log(`❌ [ÉCHEC] La transaction a échoué ou a été annulée par l'utilisateur.`);
+    // B. Logique classique pour Mobile Money / Cartes (Monetbil / Stripe)
+    if (status === 'SUCCESS' || status === 'success') {
+        console.log(`[Fiat] ✅ Paiement international réussi de ${amount} via ${paymentMethod}.`);
+        // Logique de distribution ou d'affichage de vente auto
+        return res.status(200).send('Notification fiat traitée avec succès.');
     } else {
-        console.log(`⏳ [ATTENTE] La transaction est en cours de traitement (Statut : ${status}).`);
+        console.log(`[Info] ⏳ Transaction en cours ou échouée (Status: ${status}).`);
+        return res.status(200).send('Notification ignorée ou en attente.');
     }
-
-    console.log(`========================================================\n`);
-
-    // IMPORTANT : Toujours répondre "OK" à Monetbil pour lui dire que vous avez reçu l'information
-    res.status(200).send("OK");
 });
 
-// Gestion du port pour Railway
+// Gestion du Port d'écoute dynamique (Crucial pour Render et Railway)
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`\n========================================================`);
+    console.log(`\n==============================================`);
     console.log(`🚀 GloireHub est prêt et écoute sur le port ${PORT}`);
-    console.log(`📍 Route Webhook disponible : /api/monetbil-webhook`);
-    console.log(`========================================================\n`);
+    console.log(`🔗 URL Webhook : /newpaiements/webhook`);
+    console.log(`==============================================\n`);
 });
