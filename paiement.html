@@ -11,18 +11,17 @@
         <h1 style="font-size: 22px; color: #ffffff; margin-bottom: 10px;">Génération de Vidéo IA</h1>
         <p style="font-size: 14px; color: #a0a0b0; margin-bottom: 20px;">Propulsé par GloireMedia. Cliquez ci-dessous pour lancer l'opération sécurisée.</p>
 
-        <!-- FORMULAIRE MONETBIL CONFIGURÉ POUR GLOIREPAY -->
-        <form action="" method="get" data-monetbil="form" 
+        <form action="" method="get" id="monetbil-payment-widget" data-monetbil="form" 
               data-service="29uKJIWkzNcYnmPxE2iy5f0hC8Ih6OgB" 
               data-amount="1000" 
-              data-currency="XAF">
+              data-currency="XAF"
+              data-country="TD">
             <button type="submit" style="background-color: #9b5de5; color: white; border: none; padding: 14px 24px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.2s;">
-                <i class="fa-solid fa-mobile-screen-button"></i> Payer par Mobile Money
+                Payer par Mobile Money
             </button>
         </form>
     </div>
 
-    <!-- SCRIPT DE LIAISON OFFICIEL MONETBIL V2 -->
     <script type="text/javascript" src="https://fr.monetbil.com/widget/v2/monetbil.min.js"></script>
 
 </body>
