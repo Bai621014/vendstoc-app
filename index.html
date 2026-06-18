@@ -40,7 +40,7 @@
 
             <div class="form-group">
                 <label id="label-destinataire" style="font-size:12px; color:var(--t-g);">Numéro de téléphone / Adresse</label>
-                <input type="text" id="transfert-destinataire" placeholder="Ex: +237... ou +235...">
+                <input type="text" id="transfert-destinataire" placeholder="Ex: 235...">
             </div>
 
             <div class="form-group">
@@ -70,7 +70,7 @@
                 inp.placeholder = "0x..."; 
             } else { 
                 lbl.innerText = "Numéro de téléphone du payeur"; 
-                inp.placeholder = "Ex: +23566000000"; 
+                inp.placeholder = "Ex: 23566000000"; 
             }
         }
 
@@ -92,14 +92,13 @@
 
         async function traiterPaiement() {
             const canal = document.getElementById('transfert-canal').value;
-            const dest = document.getElementById('transfert-destinataire').value.trim();
+            let dest = document.getElementById('transfert-destinataire').value.trim();
             const montant = document.getElementById('transfert-montant').value.trim();
 
             if(!dest || !montant) return alert("Veuillez remplir tous les champs.");
 
             if (canal === 'gloirecoin') {
                 alert(`⚡ Initialisation du paiement de ${montant} GloireCoin (V10) via GloirePay...`);
-                // Appel vers le webhook de votre serveur Render pour notifier l'action GloireCoin
                 try {
                     const response = await fetch(`${GLOIREHUB_API_URL}/newpaiements/webhook`, {
                         method: 'POST',
@@ -122,12 +121,18 @@
 
             } else {
                 alert("Lancement de la passerelle sécurisée Mobile Money...");
+                
+                // ✅ CORRECTION : Enlever le "+" si l'utilisateur l'a entré par réflexe
+                dest = dest.replace('+', '');
+
+                // ✅ CORRECTION : Initialisation correcte du Widget v2 de Monetbil avec le conteneur cible
                 Monetbil.widget({
                     version: 'v2.1',
                     service: 's5dyzsP', 
                     amount: montant,
+                    currency: 'XAF', // Ajout de la devise obligatoire
                     phonenumber: dest,
-                    country: 'TD',
+                    country: 'TD', // Tchad par défaut
                     container: document.getElementById('monetbil-btn-container')
                 });
             }
