@@ -1,4 +1,4 @@
-import http.client
+import http.client  # ✅ CORRIGÉ : "import" en minuscules
 import json
 import os
 
